@@ -1,30 +1,73 @@
 library(dplyr)
 
-set.seed(1234)
+# AY <- a
+# MonthLag <- M
+# ReportLag <- Q
+# PaymentLag <- P
+# OccMonth <- m
+# RepMonth <- r
+# PaymentMonth <- p
+# Claim <- C
 
-a <- 0:5
-nClaims <- round(rnorm(length(a), 40, 60))
-nClaims <- ifelse(nClaims < 1, 1, nClaims)
+#' @export
+#'
+#' @param AY Vector of accident years
+#'
+OneSimulation <- function(AY){
 
-a <- list()
-for (i in seq_along(nClaims)){
-  a[[i]] <- rep(i - 1, nClaims[i])
+  nClaims <- round(rnorm(length(AY), 40, 60))
+  nClaims <- ifelse(nClaims < 1, 1, nClaims)
+
+  AY <- list()
+  for (i in seq_along(nClaims)){
+    AY[[i]] <- rep(i - 1, nClaims[i])
+  }
+
+  AY <- unlist(AY)
+
+  MonthLag <- lapply(nClaims, runif, 0, 11) %>% unlist()
+  ReportLag <- lapply(nClaims, rexp, 1/18) %>% unlist()
+  PaymentLag <- lapply(nClaims, rexp, 1/12) %>% unlist()
+
+  OccMonth <- 12 * AY + MonthLag
+  ReportMonth <- OccMonth + ReportLag
+  PaymentMonth <- ReportLag + PaymentLag
+
+  mean <- 10400
+  sd <- 34800
+  logMean <- log(mean) - log((sd / mean) ^ 2 + 1) / 2
+  logSD <- sqrt(log((sd / mean) ^ 2 + 1))
+  Claim <- lapply(nClaims, rlnorm, logMean, logSD) %>% unlist()
+
+  dfSimulation <- data.frame(AY, MonthLag, ReportLag, PaymentLag
+                             , OccMonth, ReportMonth, PaymentMonth
+                             , Claim) %>%
+    mutate(ReportYear = floor(ReportMonth / 12)
+           , ReportLagYear = ReportYear - AY)
+
+  dfSimulation
 }
 
-a <- unlist(a)
+#' @export
+#'
+#' @param df A simulation data.frame
+UpperTriangle <- function(df){
 
-M <- lapply(nClaims, runif, 0, 11) %>% unlist()
-Q <- lapply(nClaims, rexp, 1/18) %>% unlist()
-P <- lapply(nClaims, rexp, 1/12) %>% unlist()
+  allAYs <- seq(0, max(df$AY))
+  allReportLagYears <- with(df, seq(0, max(ReportLagYear)))
+  AllLags <- expand.grid(allAYs, allReportLagYears)
+  names(AllLags) <- c("AY", "ReportLagYear")
 
-m <- 12 * a + M
-r <- m + Q
-p <- r + P
+  dfUpperTriangle <- df %>%
+    full_join(AllLags) %>%
+    filter(ReportMonth < 60) %>%
+    group_by(AY, ReportLagYear) %>%
+    summarise(Count = n()) %>%
+    arrange(AY, ReportLagYear) %>%
+    mutate(Count = ifelse(is.na(Count), 0, Count)
+           , Count = cumsum(Count)) %>%
+    tidyr::spread(ReportLagYear, Count)
 
-mean <- 10400
-sd <- 34800
-logMean <- log(mean) - log((sd / mean) ^ 2 + 1) / 2
-logSD <- sqrt(log((sd / mean) ^ 2 + 1))
-C <- lapply(nClaims, rlnorm, logMean, logSD) %>% unlist()
+  dfUpperTriangle
 
-dfSimulation <- data.frame(a, M, Q, P, m, r, p, C)
+  }
