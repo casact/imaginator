@@ -1,5 +1,3 @@
-library(dplyr)
-
 # AY <- a
 # MonthLag <- M
 # ReportLag <- Q
@@ -11,7 +9,11 @@ library(dplyr)
 
 #' @export
 #'
+#' @title OneSimulation
+#'
 #' @param AY Vector of accident years
+#'
+#' @importFrom magrittr %>%
 #'
 OneSimulation <- function(AY){
 
@@ -50,16 +52,21 @@ OneSimulation <- function(AY){
 
 #' @export
 #'
+#' @title UpperTriangle
+#'
 #' @param df A simulation data.frame
+#'
+#' @importFrom magrittr %>%
+#' @importFrom dplyr filter
+#' @importFrom dplyr group_by
+#' @importFrom dplyr summarise
+#' @importFrom dplyr arrange
+#' @importFrom dplyr mutate
+#'
 UpperTriangle <- function(df){
 
-  allAYs <- seq(0, max(df$AY))
-  allReportLagYears <- with(df, seq(0, max(ReportLagYear)))
-  AllLags <- expand.grid(allAYs, allReportLagYears)
-  names(AllLags) <- c("AY", "ReportLagYear")
-
   dfUpperTriangle <- df %>%
-    full_join(AllLags) %>%
+    tidyr::complete(AY, ReportLag, fill = 0) %>%
     filter(ReportMonth < 60) %>%
     group_by(AY, ReportLagYear) %>%
     summarise(Count = n()) %>%
