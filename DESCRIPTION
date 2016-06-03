@@ -1,15 +1,16 @@
 Package: stanard
-Title: What the Package Does (one line, title case)
+Title: Stanard - A Package to Simulate Losses
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
+Authors@R: person("Brian", "Fannin", email = "FanninQED@Yahoo.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
+License: GPL-3
 Depends:
     R (>= 3.2.3)
-License: What license is it under?
 LazyData: true
-imports:
+Imports:
     dplyr,
-    magrittr
+    magrittr,
+    tidyr
 Suggests:
     testthat,
     knitr,

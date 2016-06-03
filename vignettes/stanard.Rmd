@@ -9,3 +9,34 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+```{r}
+packageDev <- TRUE
+```
+
+Stanard's model does the following:
+
+1. For each accident year, generate a random number of losses
+2. For each loss, simulate:
+    3. The date of occurrence
+    3. The report lag
+    4. The payment lag
+    5. Payment amount
+    
+Note that this results in a fairly simple table. We have one record for each claim.
+
+```{r eval=packageDev}
+library(stanard)
+
+set.seed(1234)
+myLosses <- OneSimulation(AY = 1:5)
+
+myOtherLosses <- OneSimulation(freqFn = rpois, freqArgs = list(lambda = 50))
+```
+
+Bibliography
+
+* http://www.casact.org/pubs/forum/11wforum/LSMWP.pdf
+* https://www.casact.org/pubs/forum/98fforum/vaughn.pdf
+* https://www.casact.org/pubs/dpp/dpp80/80dpp515.pdf
+* https://www.casact.org/pubs/forum/11spforum/Homer_Rosengarten.pdf
+* https://cran.r-project.org/web/packages/actuar/vignettes/simulation.pdf
