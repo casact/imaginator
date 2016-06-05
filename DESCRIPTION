@@ -1,6 +1,6 @@
 Package: stanard
-Title: Stanard - A Package to Simulate Losses
-Version: 0.0.0.9000
+Title: A Package to Simulate General Insurance Losses
+Version: 0.1.0
 Authors@R: person("Brian", "Fannin", email = "FanninQED@Yahoo.com", role = c("aut", "cre"))
 Description: What the package does (one paragraph).
 License: GPL-3
@@ -9,8 +9,7 @@ Depends:
 LazyData: true
 Imports:
     dplyr,
-    magrittr,
-    tidyr
+    magrittr
 Suggests:
     testthat,
     knitr,

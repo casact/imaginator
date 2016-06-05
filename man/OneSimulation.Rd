@@ -4,15 +4,34 @@
 \alias{OneSimulation}
 \title{OneSimulation}
 \usage{
-OneSimulation(AY = 0:5, freqFn = rnorm, freqArgs = list(40, 7.745967),
-  occFn = runif, occArgs = list(1, 12), reportFn = rexp,
-  reportArgs = list(1/18), payFn = rexp, payArgs = list(1/12),
-  sevFn = rlnorm, sevArgs = list(8, 1.5815085))
+OneSimulation(AY = 0:5, freqFn = stats::rnorm, freqArgs = list(40,
+  7.745967), occFn = stats::runif, occArgs = list(1, 12),
+  reportFn = stats::rexp, reportArgs = list(1/18), payFn = stats::rexp,
+  payArgs = list(1/12), sevFn = stats::rlnorm, sevArgs = list(8,
+  1.5815085))
 }
 \arguments{
 \item{AY}{Vector of accident years}
 
-\item{freq}{A function and arguments to simulate frequency}
+\item{freqFn}{A function to simulate frequency}
+
+\item{freqArgs}{A list of arguments to the frequency function}
+
+\item{occFn}{A function to simulate the month of occurrence}
+
+\item{occArgs}{A list of arguments to the occurrence function}
+
+\item{reportFn}{A function to simulate the report lag}
+
+\item{reportArgs}{A list of arguments to the report lag function}
+
+\item{payFn}{A function to simulate the lag until payment}
+
+\item{payArgs}{A list of arguments to the payment lag function}
+
+\item{sevFn}{A function to simulate the severity of payment}
+
+\item{sevArgs}{A list of arguments to the severity function}
 }
 \description{
 Construct a data frame of simulated claims.

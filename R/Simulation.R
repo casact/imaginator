@@ -16,21 +16,30 @@
 #' @title OneSimulation
 #'
 #' @param AY Vector of accident years
-#' @param freq A function and arguments to simulate frequency
+#' @param freqFn A function to simulate frequency
+#' @param freqArgs A list of arguments to the frequency function
+#' @param occFn A function to simulate the month of occurrence
+#' @param occArgs A list of arguments to the occurrence function
+#' @param reportFn A function to simulate the report lag
+#' @param reportArgs A list of arguments to the report lag function
+#' @param payFn A function to simulate the lag until payment
+#' @param payArgs A list of arguments to the payment lag function
+#' @param sevFn A function to simulate the severity of payment
+#' @param sevArgs A list of arguments to the severity function
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr mutate
 #'
 OneSimulation <- function(AY = 0:5
-                          , freqFn = rnorm
+                          , freqFn = stats::rnorm
                           , freqArgs = list(40, 7.745967)
-                          , occFn = runif
+                          , occFn = stats::runif
                           , occArgs = list(1, 12)
-                          , reportFn = rexp
+                          , reportFn = stats::rexp
                           , reportArgs = list(1/18)
-                          , payFn = rexp
+                          , payFn = stats::rexp
                           , payArgs = list(1/12)
-                          , sevFn = rlnorm
+                          , sevFn = stats::rlnorm
                           , sevArgs = list(8, 1.5815085)){
 
   AY <- AY - min(AY)
@@ -72,11 +81,12 @@ OneSimulation <- function(AY = 0:5
                              , ReportLag
                              , PaymentLag
                              , OccMonth
-                             , Claim) %>%
-    mutate(ReportMonth = OccMonth + ReportLag
-           , PaymentMonth = ReportLag + PaymentLag
-           , ReportYear = floor(ReportMonth / 12)
-           , ReportLagYear = ReportYear - AY)
+                             , Claim)
+
+  dfSimulation$ReportMonth <- dfSimulation$OccMonth + dfSimulation$ReportLag
+  dfSimulation$PaymentMonth <- dfSimulation$ReportLag + dfSimulation$PaymentLag
+  dfSimulation$ReportYear <- floor(dfSimulation$ReportMonth / 12)
+  dfSimulation$ReportLagYear <- dfSimulation$ReportYear - dfSimulation$AY
 
   dfSimulation
 }
