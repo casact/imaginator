@@ -1,4 +1,6 @@
 [![Travis-CI Build Status](https://travis-ci.org/PirateGrunt/stanard.svg?branch=master)](https://travis-ci.org/PirateGrunt/stanard)
+[![GitHub version](https://badge.fury.io/gh/PirateGrunt%2Fstanard.svg)](https://badge.fury.io/gh/PirateGrunt%2Fstanard)
+[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/stanard)](http://cran.r-project.org/package=stanard)
 
 # stanard
 
