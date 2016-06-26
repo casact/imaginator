@@ -7,12 +7,16 @@ vignette: >
   %\VignetteIndexEntry{Vignette Title}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: bibliography.bib
+nocite: |
+  @Loss_Simulation_Working_Party, @Vaughn, @actuarPackage
 ---
 
 ```{r}
-packageDev <- TRUE
+packageDev <- FALSE
 ```
 
+Stanard wrote a paper once [@stanard]
 Stanard's model does the following:
 
 1. For each accident year, generate a random number of losses
@@ -33,10 +37,8 @@ myLosses <- OneSimulation(AY = 1:5)
 myOtherLosses <- OneSimulation(freqFn = rpois, freqArgs = list(lambda = 50))
 ```
 
-Bibliography
 
-* http://www.casact.org/pubs/forum/11wforum/LSMWP.pdf
-* https://www.casact.org/pubs/forum/98fforum/vaughn.pdf
-* https://www.casact.org/pubs/dpp/dpp80/80dpp515.pdf
-* https://www.casact.org/pubs/forum/11spforum/Homer_Rosengarten.pdf
-* https://cran.r-project.org/web/packages/actuar/vignettes/simulation.pdf
+```{r eval=FALSE, echo=FALSE}
+```
+
+# References
