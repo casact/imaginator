@@ -3,3 +3,5 @@
 
 refs/
 ^\.travis\.yml$
+
+README.md

@@ -4,6 +4,6 @@
 
 # stanard
 
-This is a package which will simulate a set of individual claims with random occurrence, report and payment lags. This algorithm was first proposed by Stanard.
+This is a package which will simulate a set of individual claims with random occurrence, report and payment lags. This algorithm was first proposed by James Stanard, whose original paper may be found here: [A SIMULATION TEST OF PREDICTION ERRORS OF LOSS RESERVE ESTIMATION TECHNIQUES](https://www.casact.org/pubs/proceed/proceed85/85124.pdf).
 
 Future developments may include multiple payments per claim, simulated case reserves.
