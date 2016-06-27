@@ -1,0 +1,21 @@
+---
+title: "Simulate Policies"
+author: "Brian A. Fannin"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+In addition to simulating losses, `stanard` will also simulate policy exposures. 
+
+I'd like to siulate 10 years of policies, with fixed percentages in each year for a particular characteristic.
+
+Or, I'd like to generate policies with a declining number of particular policies.
+
+How do I define policy period?
+
+Can I simulate something so that most of the effetive dates fall on specific days?
+
