@@ -1,5 +1,5 @@
 ---
-title: "R Package stanard"
+title: "R Package imagine"
 author: "Brian A Fannin"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
@@ -29,7 +29,7 @@ Stanard's model does the following:
 Note that this results in a fairly simple table. We have one record for each claim.
 
 ```{r eval=packageDev}
-library(stanard)
+library(imagine)
 
 set.seed(1234)
 myLosses <- OneSimulation(AY = 1:5)

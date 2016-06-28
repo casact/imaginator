@@ -1,8 +1,8 @@
-Package: stanard
-Title: A Package to Simulate General Insurance Losses
+Package: imagine
+Title: Simulate general insurance policies and losses
 Version: 0.1.0
 Authors@R: person("Brian", "Fannin", email = "FanninQED@Yahoo.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Description: Simulate general insurance policies, losses and loss emergence.
 License: GPL-3
 Depends:
     R (>= 3.2.3)

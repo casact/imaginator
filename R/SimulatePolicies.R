@@ -2,7 +2,7 @@ GetExpirationDate <- function(EffectiveDate){
   policyYear <- lubridate::year(EffectiveDate)
   ExpirationDate <- EffectiveDate + days(364)
 
-  addOne <- lubridate::leap_year(lubridate::year(EffectiveDate))
+  addOne <- lubridate::leap_year(lubridate::year(ExpirationDate))
 
   ExpirationDate[addOne] <- ExpirationDate[addOne] + days(1)
 
