@@ -1,3 +1,15 @@
+GetExpirationDate <- function(EffectiveDate){
+  policyYear <- lubridate::year(EffectiveDate)
+  ExpirationDate <- EffectiveDate + days(365)
+
+  if (lubridate::leap_year(lubridate::year(EffectiveDate))) {
+    ExpirationDate <- ExpirationDate + days(1)
+  }
+
+  ExpirationDate
+
+}
+
 #' @title Simulate a new set of policies
 #'
 #' @name NewPolicies
@@ -61,9 +73,7 @@ RenewPolicies <- function(dfPolicy, Renewal){
   dfPolicy <- dfPolicy[renewals, ]
 
   dfPolicy$PolicyEffectiveDate <- dfPolicy$PolicyExpirationDate +  days(1)
-  # policyTerm <- ifelse(lubridate::leap_year(dfPolicy$PolicyEffectiveDate), 366, 365)
-  policyTerm <- 365
-  dfPolicy$PolicyExpirationDate <- dfPolicy$PolicyExpirationDate + policyTerm
+  dfPolicy$PolicyExpirationDate <- GetExpirationDate(dfPolicy$PolicyEffectiveDate)
 
   dfPolicy
 }
