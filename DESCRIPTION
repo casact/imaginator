@@ -9,7 +9,10 @@ Depends:
 LazyData: true
 Imports:
     dplyr,
-    magrittr
+    magrittr,
+    assertthat,
+    lubridate,
+    stringi
 Suggests:
     testthat,
     knitr,
