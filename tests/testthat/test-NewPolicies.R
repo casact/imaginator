@@ -1,4 +1,4 @@
-context("New Policies")
+context("NewPolicies")
 
 test_that("New policies", {
   df <- NewPolicies(50, 2001, 1)

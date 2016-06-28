@@ -1,4 +1,4 @@
-context("Renewal Policies")
+context("RenewalPolicies")
 
 dfLeapYear1 <- data.frame(PolicyEffectiveDate = as.Date("2014-03-01")
                           , PolicyExpirationDate = as.Date("2015-02-28")
