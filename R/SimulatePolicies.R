@@ -2,12 +2,25 @@ GetExpirationDate <- function(EffectiveDate){
   policyYear <- lubridate::year(EffectiveDate)
   ExpirationDate <- EffectiveDate + days(365)
 
-  if (lubridate::leap_year(lubridate::year(EffectiveDate))) {
-    ExpirationDate <- ExpirationDate + days(1)
-  }
+  addOne <- lubridate::leap_year(lubridate::year(EffectiveDate))
+
+  ExpirationDate[addOne] <- ExpirationDate[addOne] + days(1)
 
   ExpirationDate
 
+}
+
+#' @importFrom stringi stri_rand_strings
+GetPolicyIDs <- function(N){
+  policyID_length <- as.integer(log(N, 36)) + 1
+
+  numPortion <- stringi::stri_rand_strings(N, policyID_length, pattern = "[0-9]")
+
+  charPortion <- stringi::stri_rand_strings(N, policyID_length, pattern = "[A-Z]")
+
+  policyID <- paste(numPortion, charPortion, sep = "-")
+
+  policyID
 }
 
 #' @title Simulate a new set of policies
@@ -29,21 +42,19 @@ GetExpirationDate <- function(EffectiveDate){
 #' @importFrom lubridate ymd
 #' @importFrom lubridate days
 #'
-NewPolicies <- function(N, PolicyYear, Exposure){
+NewPolicies <- function(N, PolicyYear, Exposure = 1){
 
   days <- 365 + ifelse(lubridate::leap_year(PolicyYear), 1, 0)
   days <- days - 1
   effectiveDates <- lubridate::ymd(paste(PolicyYear, "01", "01", sep="-"))
   dayOffsets <- sample(days, size = N, replace = TRUE)
   effectiveDates <- effectiveDates + lubridate::days(dayOffsets)
-  expirationDates <- effectiveDates + days
-
-  policyID_length <- as.integer(log(N, 36)) + 2
+  expirationDates <- GetExpirationDate(effectiveDates)
 
   dfPolicy <- data.frame(PolicyEffectiveDate = effectiveDates
                          , PolicyExpirationDate = expirationDates
                          , Exposure = Exposure
-                         , PolicyID = stringi::stri_rand_strings(N, policyID_length)
+                         , PolicyID = GetPolicyIDs(N)
                          , stringsAsFactors = FALSE)
 
 }

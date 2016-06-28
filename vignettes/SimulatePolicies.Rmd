@@ -17,5 +17,12 @@ Or, I'd like to generate policies with a declining number of particular policies
 
 How do I define policy period?
 
-Can I simulate something so that most of the effetive dates fall on specific days?
+Can I simulate something so that most of the effective dates fall on specific days?
+
+# Case 1
+
+```{r}
+library(stanard)
+dfPolicy <- NewPolicies(N = 5000, 2001, 1)
+```
 
