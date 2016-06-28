@@ -24,5 +24,6 @@ Can I simulate something so that most of the effective dates fall on specific da
 ```{r}
 library(stanard)
 dfPolicy <- NewPolicies(N = 5000, 2001, 1)
+dfPolicy2 <- RenewPolicies(dfPolicy, Renewal = 0.65)
 ```
 
