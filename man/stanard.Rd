@@ -6,6 +6,6 @@
 \alias{stanard-package}
 \title{stanard.}
 \description{
-stanard.
+This package will simulate losses.
 }
 
