@@ -2,14 +2,13 @@
 % Please edit documentation in R/SimulatePolicies.R
 \name{GrowPolicies}
 \alias{GrowPolicies}
-\alias{RenewPolicies}
 \title{Simulate policy growth}
 \usage{
-RenewPolicies(dfPolicy, Renewal)
+GrowPolicies(dfPolicy, Growth)
 }
 \arguments{
 \item{dfPolicy}{Data frame of policy data}
 
-\item{Renewal}{Scalar value between zero and one}
+\item{Growth}{Scalar value greater than or equal to zero}
 }
 

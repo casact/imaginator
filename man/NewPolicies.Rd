@@ -4,7 +4,7 @@
 \alias{NewPolicies}
 \title{Simulate a new set of policies}
 \usage{
-NewPolicies(N, PolicyYear, Exposure = 1)
+NewPolicies(N, PolicyYear, Exposure = 1, AdditionalColumns)
 }
 \arguments{
 \item{N}{The number of policies to generate}
@@ -12,6 +12,8 @@ NewPolicies(N, PolicyYear, Exposure = 1)
 \item{PolicyYear}{Scalar integer indicating the policy year to generate}
 
 \item{Exposure}{Vector of exposures}
+
+\item{AdditionalColumns}{A list of addtional column names and values}
 }
 \value{
 Data frame of policy data
@@ -19,5 +21,7 @@ Data frame of policy data
 \details{
 This function will create a data frame of policy data. Effective dates are uniformly distributed throughout the
 year.
+
+When providing additional columns, each element of the list must be a scalar and be named.
 }
 

@@ -4,34 +4,26 @@
 \alias{SimulatePolicies}
 \title{Simulate a data frame of policies}
 \usage{
-SimulatePolicies(StartYear, NumYears, N, Exposure = 1)
+SimulatePolicies(N, PolicyYears, Exposure = 1, Renewal, Growth,
+  AdditionalColumns)
 }
 \arguments{
-\item{N}{An integer giving the number of policies per year}
-
-\item{Exposure}{Exposure per policy}
+\item{N}{An integer giving the number of policies in the first year}
 
 \item{PolicyYears}{A vector of integers in sequence}
 
+\item{Exposure}{Exposure per policy}
+
+\item{Renewal}{A vector indicating loss of policies}
+
 \item{Growth}{A vector indicating the rate of growth of policies}
 
-\item{Retention}{A vector indicating loss of policies}
+\item{AdditionalColumns}{}
 }
 \value{
-A data frame of policy data as explained in
-}
-\details{
-
+A data frame of policy data
 }
 \examples{
 
-py <- 2001:2010
-
-N <- 5000
-
-exposure <- 1
-rate <- 1
-
-retention <- 0.9
 }
 

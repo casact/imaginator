@@ -9,22 +9,133 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-In addition to simulating losses, `imagine` will also simulate policy exposures. 
+# The Policy Data Frame
 
-I'd like to siulate 10 years of policies, with fixed percentages in each year for a particular characteristic.
+A policy data frame will always have at least the following columns:
 
-Or, I'd like to generate policies with a declining number of particular policies.
+* PolicyEffectiveDate
+* PolicyExpirationDate
+* Exposure
+* PolicyID
 
-How do I define policy period?
+The PolicyID is a randonly generated character string which will uniquely identify the policy. 
 
-Can I simulate something so that most of the effective dates fall on specific days?
+In addition, it's possible to add further columns of descriptive information such as line of business or state.
 
-# Case 1
+## Policy 
+All policies are assumed to be annual and to have expiration dates which are one calendar day before their effective date. 
+
+### Leap years
+
+It's possible for a policy to be written with an effective date of February 29th in a leap year. In the following year, the effective date will change to March 1st. In addition, if a policy has an effective date of March 1, it will ordinarily expire on February 28th. However, in a leap year, it will expire on February 29th.
+
+See, for example:
+
+| Policy | Year    | Effective Date    | Expiration Date     |
+| ------ | ------- | ----------------- | ------------------- |
+| ABC    | Year 1  | February 29, 2004 | February 28, 2005   |
+| ABC    | Year 2  | March 1, 2005     | February 28, 2006   |
+|        |         |                   |                     |
+| XYZ    | Year 1  | March 1, 2003     | February 29, 2004   |
+| XYZ    | Year 2  | March 1, 2004     | February 28, 2005   |
+
+
+# New Policies
+
+The `NewPolicies` function will return a data frame with a fixed number of policies.
 
 ```{r}
 library(imagine)
+set.seed(1234)
 dfPolicy <- NewPolicies(N = 5000, 2001, 1)
-dfPolicy2 <- RenewPolicies(dfPolicy, Renewal = 0.65)
-dfPolicy3 <- RenewPolicies(dfPolicy2, Renewal = 0.65)
 ```
 
+```{r echo=FALSE, message=FALSE}
+library(dplyr)
+dfDisplay <- dfPolicy %>% 
+  arrange(PolicyID) %>% 
+  head()
+
+knitr::kable(dfDisplay)
+```
+
+```{r}
+set.seed(1234)
+dfGL <- NewPolicies(N = 5000, 2001, 1, AdditionalColumns = list(Line = "GL", State = "CA"))
+```
+
+```{r echo=FALSE}
+dfDisplay <- dfGL %>% 
+  arrange(PolicyID) %>% 
+  head()
+
+knitr::kable(dfDisplay)
+```
+
+# Renew Policies
+
+```{r}
+dfRenewal <- RenewPolicies(dfPolicy, Renewal = 0.65)
+```
+
+```{r echo=FALSE}
+dfDisplay <- dfRenewal %>% 
+  arrange(PolicyID) %>% 
+  head()
+
+knitr::kable(dfDisplay)
+```
+
+# Grow Policies
+
+Policy growth is a special case of generating new policy data. However, it requires a policy data frame as the base for growth.
+
+```{r}
+dfGrowth <- GrowPolicies(dfPolicy, Growth = 0.1)
+```
+
+```{r}
+dfGrowGL <- GrowPolicies(dfGL, Growth = 0.1)
+```
+
+
+```{r echo=FALSE}
+dfDisplay <- dfGrowth %>% 
+  arrange(PolicyID) %>% 
+  head()
+
+knitr::kable(dfDisplay)
+```
+
+# Bringing it all together
+
+Finally, we show how to generate a sequence of policy years with user-specified renewal and growth rates.
+
+```{r }
+dfNextYear <- IncrementPolicyYear(dfGL, Renewal = 0.65, Growth = 0.1)
+```
+
+```{r echo=FALSE}
+dfDisplay <- dfNextYear %>% 
+  arrange(PolicyID) %>% 
+  head()
+
+knitr::kable(dfDisplay)
+```
+
+```{r}
+dfTwoYears <- SimulatePolicies(1000, 2001:2002, Renewal = c(1, .9), Growth = c(0, .05))
+```
+
+```{r echo=FALSE}
+dfDisplay <- dfNextYear %>% 
+  arrange(PolicyID) %>% 
+  head()
+
+knitr::kable(dfDisplay)
+```
+
+
+## Issues
+
+* Can I simulate something so that most of the effective dates fall on specific days?

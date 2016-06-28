@@ -1,3 +1,10 @@
+PolicyTableColumnNames <- function(){
+  c("PolicyEffectiveDate"
+    , "PolicyExpirationDate"
+    , "Exposure"
+    , "PolicyID")
+}
+
 GetExpirationDate <- function(EffectiveDate){
   policyYear <- lubridate::year(EffectiveDate)
   ExpirationDate <- EffectiveDate + days(364)
@@ -30,6 +37,7 @@ GetPolicyIDs <- function(N){
 #' @param N The number of policies to generate
 #' @param PolicyYear Scalar integer indicating the policy year to generate
 #' @param Exposure Vector of exposures
+#' @param AdditionalColumns A list of addtional column names and values
 #'
 #' @return Data frame of policy data
 #'
@@ -37,12 +45,24 @@ GetPolicyIDs <- function(N){
 #' This function will create a data frame of policy data. Effective dates are uniformly distributed throughout the
 #' year.
 #'
+#' When providing additional columns, each element of the list must be a scalar and be named.
+#'
 #' @export
 #'
 #' @importFrom lubridate ymd
 #' @importFrom lubridate days
 #'
-NewPolicies <- function(N, PolicyYear, Exposure = 1){
+NewPolicies <- function(N, PolicyYear, Exposure = 1, AdditionalColumns){
+
+  dfPolicy <- data.frame(PolicyEffectiveDate = double(0)
+                         , PolicyExpirationDate = double(0)
+                         , Exposure = double(0)
+                         , PolicyID = character(0)
+                         , stringsAsFactors = FALSE)
+
+  if (N == 0) {
+    return (dfPolicy)
+  }
 
   days <- 365 + ifelse(lubridate::leap_year(PolicyYear), 1, 0)
   days <- days - 1
@@ -57,17 +77,23 @@ NewPolicies <- function(N, PolicyYear, Exposure = 1){
                          , PolicyID = GetPolicyIDs(N)
                          , stringsAsFactors = FALSE)
 
+  if (!missing(AdditionalColumns)){
+    for (i in seq_along(AdditionalColumns)){
+      dfPolicy[[names(AdditionalColumns)[i]]] <- AdditionalColumns[[i]]
+    }
+
+  }
+
+  dfPolicy
+
 }
 
-#' @title Simulate policy growth
+#' @title Simulate policy renewal
 #'
-#' @name GrowPolicies
-
-#' @title Simulate the renewal of a set of policies
 #' @name RenewPolicies
 #'
 #' @param dfPolicy Data frame of policy data
-#' @param Renewal Scalar value between zero and one
+#' @param Renewal Scalar value greater than or equal to zero
 #'
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.number
@@ -89,19 +115,73 @@ RenewPolicies <- function(dfPolicy, Renewal){
   dfPolicy
 }
 
+#' @title Simulate policy growth
+#'
+#' @name GrowPolicies
+#'
+#' @param dfPolicy Data frame of policy data
+#' @param Growth Scalar value greater than or equal to zero
+#'
+#' @importFrom assertthat assert_that
+#' @importFrom assertthat is.number
+#' @importFrom lubridate year
+#'
+#' @export
+GrowPolicies <- function(dfPolicy, Growth){
+  assertthat::assert_that(is.number(Growth))
+  assertthat::assert_that(Growth > 0)
+  assertthat::assert_that(nrow(dfPolicy) > 0)
+
+  newBizCount <- as.integer(round(nrow(dfPolicy) * Growth))
+
+  dfOneRow <- dfPolicy[1, ]
+  policyYear <- lubridate::year(dfOneRow$PolicyEffectiveDate) + 1
+
+  addColumns <- setdiff(names(dfOneRow), PolicyTableColumnNames())
+
+  if (length(addColumns) > 0){
+    addColumns <- dfOneRow[, addColumns, drop = FALSE]
+    addColumns <- as.list(addColumns)
+    dfNew <- NewPolicies(N = newBizCount, PolicyYear = policyYear, AdditionalColumns = addColumns)
+  } else {
+    dfNew <- NewPolicies(N = newBizCount, PolicyYear = policyYear)
+  }
+
+  dfNew
+}
+
+#' @title Incremental a policy year
+#' @name IncrementPolicyYear
+#'
+#' @param dfPolicy A policy data frame
+#' @param Renewal Scalar renewal rate
+#' @param Growth Scalar growth rate
+#'
+#' @return Policy data frame
+#'
+#' @export
+IncrementPolicyYear <- function(dfPolicy, Renewal, Growth){
+  dfRenew <- RenewPolicies(dfPolicy, Renewal)
+
+  dfNew <- GrowPolicies(dfPolicy, Growth)
+
+  dfPolicy <- rbind(dfRenew, dfNew)
+
+  dfPolicy
+}
+
 #' @title Simulate a data frame of policies
 #' @name SimulatePolicies
 #' @export
 #'
+#' @param N An integer giving the number of policies in the first year
 #' @param PolicyYears A vector of integers in sequence
-#' @param N An integer giving the number of policies per year
 #' @param Exposure Exposure per policy
+#' @param Renewal A vector indicating loss of policies
 #' @param Growth A vector indicating the rate of growth of policies
-#' @param Retention A vector indicating loss of policies
+#' @param AdditionalColumns
 #'
-#' @return A data frame of policy data as explained in
-#'
-#' @details
+#' @return A data frame of policy data
 #'
 #' @importFrom lubridate days
 #' @importFrom lubridate years
@@ -109,40 +189,19 @@ RenewPolicies <- function(dfPolicy, Renewal){
 #'
 #' @examples
 #'
-#' py <- 2001:2010
-#'
-#' N <- 5000
-#'
-#' exposure <- 1
-#' rate <- 1
-#'
-#' retention <- 0.9
-SimulatePolicies <- function(StartYear, NumYears, N, Exposure = 1)
+SimulatePolicies <- function(N, PolicyYears, Exposure = 1, Renewal, Growth, AdditionalColumns)
 {
 
   numYears <- length(PolicyYears)
 
-  N <- rep(N, numYears)
-
-  days <- rep(365, length(numYears)) + ifelse(lubridate::leap_year(PolicyYears), 1, 0)
-  days <- days - 1
-
   lstDF <- vector("list", numYears)
 
-  for (iYear in seq_along(PolicyYears)){
+  lstDF[[1]] <- NewPolicies(N, PolicyYears[1], Exposure, AdditionalColumns)
 
-    effectiveDates <- lubridate::ymd(paste(PolicyYears[iYear], "01", "01", sep="-"))
-    dayOffsets <- sample(days[iYear], size = N[iYear], replace = TRUE)
-    effectiveDates <- effectiveDates + lubridate::days(dayOffsets)
-    expirationDates <- effectiveDates + days[iYear]
+  for (iYear in seq.int(2, numYears)){
+    # lstDF[[iYear]] <- IncrementPolicyYear(lstDF[[iYear - 1]], Renewal[iYear], Growth[iYear])
 
-    policyID_length <- as.integer(log(N[iYear], 36)) + 2
-
-    lstDF[[iYear]] <- data.frame(PolicyEffectiveDate = effectiveDates
-                                 , PolicyExpirationDate = expirationDates
-                                 , Exposure = Exposure
-                                 , PolicyID = stringi::stri_rand_strings(N[iYear], policyID_length)
-                                 , stringsAsFactors = FALSE)
+    lstDF[[iYear]] <- IncrementPolicyYear(lstDF[[iYear - 1]], Renewal[iYear], Growth[iYear])
   }
 
   dfPolicy <- do.call(rbind, lstDF)
