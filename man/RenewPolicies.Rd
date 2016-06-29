@@ -11,4 +11,8 @@ RenewPolicies(dfPolicy, Renewal)
 
 \item{Renewal}{Scalar value greater than or equal to zero}
 }
+\description{
+Given a policy data frame, this will construct renewal data frames. The number of policies which
+renew is governed by the the \code{Renewal} parameter.
+}
 

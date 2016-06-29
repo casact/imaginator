@@ -5,6 +5,7 @@ PolicyTableColumnNames <- function(){
     , "PolicyID")
 }
 
+#' @importFrom lubridate year
 GetExpirationDate <- function(EffectiveDate){
   policyYear <- lubridate::year(EffectiveDate)
   ExpirationDate <- EffectiveDate + days(364)
@@ -32,7 +33,8 @@ GetPolicyIDs <- function(N){
 
 #' @title Simulate a new set of policies
 #'
-#' @name NewPolicies
+#' @description This will generate a data frame of policy data. This may be used to construct renewal and growth
+#' data frames for subsequent policy years.
 #'
 #' @param N The number of policies to generate
 #' @param PolicyYear Scalar integer indicating the policy year to generate
@@ -42,7 +44,7 @@ GetPolicyIDs <- function(N){
 #' @return Data frame of policy data
 #'
 #' @details
-#' This function will create a data frame of policy data. Effective dates are uniformly distributed throughout the
+#' Effective dates are uniformly distributed throughout the
 #' year.
 #'
 #' When providing additional columns, each element of the list must be a scalar and be named.
@@ -90,6 +92,9 @@ NewPolicies <- function(N, PolicyYear, Exposure = 1, AdditionalColumns){
 
 #' @title Simulate policy renewal
 #'
+#' @description Given a policy data frame, this will construct renewal data frames. The number of policies which
+#' renew is governed by the the \code{Renewal} parameter.
+#'
 #' @name RenewPolicies
 #'
 #' @param dfPolicy Data frame of policy data
@@ -116,6 +121,8 @@ RenewPolicies <- function(dfPolicy, Renewal){
 }
 
 #' @title Simulate policy growth
+#'
+#' @description Given a policy data frame, this will generate new policies in subsequent policy years.
 #'
 #' @name GrowPolicies
 #'
@@ -151,6 +158,10 @@ GrowPolicies <- function(dfPolicy, Growth){
 }
 
 #' @title Incremental a policy year
+#'
+#' @description Given a policy data frame, this will combine the \code{GrowPolicies} and \code{RenewPolicies} functions
+#' to produce a subsequent policy year.
+#'
 #' @name IncrementPolicyYear
 #'
 #' @param dfPolicy A policy data frame
@@ -171,6 +182,9 @@ IncrementPolicyYear <- function(dfPolicy, Renewal, Growth){
 }
 
 #' @title Simulate a data frame of policies
+#'
+#' @description Given a starting number of policies, this function will generate additional years of policy data.
+#'
 #' @name SimulatePolicies
 #' @export
 #'
@@ -179,15 +193,13 @@ IncrementPolicyYear <- function(dfPolicy, Renewal, Growth){
 #' @param Exposure Exposure per policy
 #' @param Renewal A vector indicating loss of policies
 #' @param Growth A vector indicating the rate of growth of policies
-#' @param AdditionalColumns
+#' @param AdditionalColumns A list of addtional column names and values
 #'
 #' @return A data frame of policy data
 #'
 #' @importFrom lubridate days
 #' @importFrom lubridate years
 #' @importFrom lubridate ymd
-#'
-#' @examples
 #'
 SimulatePolicies <- function(N, PolicyYears, Exposure = 1, Renewal, Growth, AdditionalColumns)
 {

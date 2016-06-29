@@ -18,12 +18,12 @@ SimulatePolicies(N, PolicyYears, Exposure = 1, Renewal, Growth,
 
 \item{Growth}{A vector indicating the rate of growth of policies}
 
-\item{AdditionalColumns}{}
+\item{AdditionalColumns}{A list of addtional column names and values}
 }
 \value{
 A data frame of policy data
 }
-\examples{
-
+\description{
+Given a starting number of policies, this function will generate additional years of policy data.
 }
 

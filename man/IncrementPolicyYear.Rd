@@ -16,4 +16,8 @@ IncrementPolicyYear(dfPolicy, Renewal, Growth)
 \value{
 Policy data frame
 }
+\description{
+Given a policy data frame, this will combine the \code{GrowPolicies} and \code{RenewPolicies} functions
+to produce a subsequent policy year.
+}
 

@@ -11,4 +11,7 @@ GrowPolicies(dfPolicy, Growth)
 
 \item{Growth}{Scalar value greater than or equal to zero}
 }
+\description{
+Given a policy data frame, this will generate new policies in subsequent policy years.
+}
 

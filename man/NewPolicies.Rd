@@ -18,8 +18,12 @@ NewPolicies(N, PolicyYear, Exposure = 1, AdditionalColumns)
 \value{
 Data frame of policy data
 }
+\description{
+This will generate a data frame of policy data. This may be used to construct renewal and growth
+data frames for subsequent policy years.
+}
 \details{
-This function will create a data frame of policy data. Effective dates are uniformly distributed throughout the
+Effective dates are uniformly distributed throughout the
 year.
 
 When providing additional columns, each element of the list must be a scalar and be named.
