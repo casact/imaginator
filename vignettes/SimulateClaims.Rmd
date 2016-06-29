@@ -1,0 +1,83 @@
+---
+title: "Simulate Claims"
+author: "Brian A. Fannin"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r echo=FALSE, message=FALSE}
+library(dplyr)
+```
+
+## Overview
+
+```{r}
+library(imagine)
+dfPolicy <- NewPolicies(500, 2010)
+```
+
+```{r}
+onlyOne <- FixedVal(1)
+```
+
+```{r}
+mySeverity <- GammaHelper(10000, 0.5)
+```
+
+Note that we augment the policy table by adding a field for the number of claims.
+
+## Simulate by evaluation date
+
+This is basically chain ladder.
+
+We'll create a very simple example with two evaluation dates.
+
+```{r}
+evalDates <- seq.Date(as.Date("2010-12-31"), length.out = 3, by = "years")
+```
+
+```{r }
+lstClaimSim1 <- ClaimsByEvaluationDate(dfPolicy
+                                       , Frequency = onlyOne
+                                       , Severity = mySeverity
+                                       , EvaluationDates = evalDates)
+```
+
+Now let's see what we get with exactly two claims per policy
+
+```{r }
+lstClaimSim2 <- ClaimsByEvaluationDate(dfPolicy
+                                       , Frequency = FixedVal(2)
+                                       , Severity = mySeverity
+                                       , EvaluationDates = evalDates)
+```
+
+```{r echo=FALSE, message=FALSE}
+dfDisplay <- lstClaimSim2$Claims %>% 
+  arrange(PolicyID) %>% 
+  head()
+
+knitr::kable(dfDisplay)
+```
+
+And for lots of fun, let's use a Poisson frequency
+
+```{r}
+set.seed(1234)
+lstClaimPois <- ClaimsByEvaluationDate(dfPolicy
+                                       , Frequency = PoissonHelper(5)
+                                       , Severity = mySeverity
+                                       , EvaluationDates = evalDates)
+```
+
+```{r echo=FALSE, message=FALSE}
+dfDisplay <- lstClaimPois$Claims %>% 
+  arrange(PolicyID) %>% 
+  head(10)
+
+knitr::kable(dfDisplay)
+```

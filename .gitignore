@@ -16,7 +16,5 @@ vignettes/*.R
 .httr-oauth
 inst/doc
 .Rproj.user
-
 *.pdf
-
 refs/

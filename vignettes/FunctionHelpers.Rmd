@@ -1,0 +1,41 @@
+---
+title: "Function Helpers"
+author: "Brian A. Fannin"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Vignette Title}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The `imagine` package relies on random number generators which don't use parameters. This makes the simulation interface cleaner.
+
+## Frequency
+
+```{r}
+library(imagine)
+pois5 <- PoissonHelper(5)
+pois10 <- PoissonHelper(10)
+```
+
+These functions may now be used to generate random variables without having to specify the parameters of the distribution. The plot below shows a histogram of 500 simulations of each poisson function.
+
+```{r eval=FALSE}
+pois5(500)
+pois10(500)
+```
+
+
+```{r echo=FALSE}
+library(ggplot2)
+set.seed(1234)
+
+dfClaims <- data.frame(ClaimsA = pois5(500), ClaimsB = pois10(500))
+plt <- ggplot(dfClaims, aes(ClaimsA)) + geom_histogram(binwidth = 1, fill = "blue", color = "black", alpha=0.7) 
+plt <- plt + geom_histogram(aes(ClaimsB), binwidth = 1, fill = "red", color = "black", alpha = 0.7) + xlab("Claims")
+
+plt
+```
+
+
