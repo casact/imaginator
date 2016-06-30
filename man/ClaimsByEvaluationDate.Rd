@@ -4,7 +4,7 @@
 \alias{ClaimsByEvaluationDate}
 \title{Claims by evaluation date}
 \usage{
-ClaimsByEvaluationDate(dfPolicy, Frequency, Severity, Link, EvaluationDates)
+ClaimsByEvaluationDate(dfPolicy, Frequency, Severity, Links, EvaluationDates)
 }
 \arguments{
 \item{dfPolicy}{A policy data frame}
@@ -13,17 +13,17 @@ ClaimsByEvaluationDate(dfPolicy, Frequency, Severity, Link, EvaluationDates)
 
 \item{Severity}{A function which will randomly generate the severity of each claim}
 
-\item{Link}{A function which dictates how severities change from one evaluation date to the next}
+\item{Links}{A list of functions which dictates how severities change from one evaluation date to the next}
 
 \item{EvaluationDates}{A vector of evaluation dates}
 }
 \value{
-A list with revised policy table and a new claims table
+A claims data frame
 }
 \description{
 Given a data frame of policies, this will simulate claims
 }
 \details{
-Each function
+The claim amounts are presumed to be cumulative
 }
 

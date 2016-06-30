@@ -17,19 +17,3 @@ PoissonHelper <- function(lambda){
   poisHelp
 
 }
-
-#' FixedVal
-#'
-#' Returns the same, non-stochastic, value
-#'
-#' @param Fixed A scalar value
-#'
-#' @return A function
-#'
-#' @export
-FixedVal <- function(Fixed){
-  theFunc <- function(n){
-    rep(Fixed, n)
-  }
-  theFunc
-}

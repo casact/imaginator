@@ -21,10 +21,6 @@ dfPolicy <- NewPolicies(500, 2010)
 ```
 
 ```{r}
-onlyOne <- FixedVal(1)
-```
-
-```{r}
 mySeverity <- GammaHelper(10000, 0.5)
 ```
 
@@ -34,48 +30,64 @@ Note that we augment the policy table by adding a field for the number of claims
 
 This is basically chain ladder.
 
-We'll create a very simple example with two evaluation dates.
+We'll create a very simple example with three evaluation dates, fixed frequency and fixed link ratios.
 
 ```{r}
 evalDates <- seq.Date(as.Date("2010-12-31"), length.out = 3, by = "years")
+fixedLinks <- list(FixedVal(2)
+                   , FixedVal(1.5))
 ```
 
 ```{r }
-lstClaimSim1 <- ClaimsByEvaluationDate(dfPolicy
-                                       , Frequency = onlyOne
-                                       , Severity = mySeverity
-                                       , EvaluationDates = evalDates)
-```
-
-Now let's see what we get with exactly two claims per policy
-
-```{r }
-lstClaimSim2 <- ClaimsByEvaluationDate(dfPolicy
-                                       , Frequency = FixedVal(2)
-                                       , Severity = mySeverity
-                                       , EvaluationDates = evalDates)
+dfClaimsFixed <- ClaimsByEvaluationDate(dfPolicy
+                                        , Frequency = FixedVal(1)
+                                        , Severity = FixedVal(100)
+                                        , Links = fixedLinks
+                                        , EvaluationDates = evalDates)
 ```
 
 ```{r echo=FALSE, message=FALSE}
-dfDisplay <- lstClaimSim2$Claims %>% 
+dfDisplay <- dfClaimsFixed %>% 
   arrange(PolicyID) %>% 
   head()
 
 knitr::kable(dfDisplay)
 ```
 
-And for lots of fun, let's use a Poisson frequency
+We can make things a bit more complicated by introducing variable link ratios
 
-```{r}
+```{r }
+normalLinks <- list(NormalHelper(2, 1, .7, 4)
+                    , NormalHelper(1.5, .5, .7, 3))
+
+dfVariableLinks <- ClaimsByEvaluationDate(dfPolicy
+                                          , Frequency = FixedVal(1)
+                                          , Severity = FixedVal(100)
+                                          , Links = normalLinks
+                                          , EvaluationDates = evalDates)
+```
+
+```{r echo=FALSE, message=FALSE}
+dfDisplay <- dfVariableLinks %>% 
+  arrange(PolicyID) %>% 
+  head()
+
+knitr::kable(dfDisplay)
+```
+
+And for lots of fun, let's use a Poisson frequency, gamma severity and variable links.
+
+```{r }
 set.seed(1234)
-lstClaimPois <- ClaimsByEvaluationDate(dfPolicy
-                                       , Frequency = PoissonHelper(5)
-                                       , Severity = mySeverity
+dfAllVariable <- ClaimsByEvaluationDate(dfPolicy
+                                       , Frequency = PoissonHelper(1)
+                                       , Severity = GammaHelper(10000, 0.5)
+                                       , Links = normalLinks
                                        , EvaluationDates = evalDates)
 ```
 
 ```{r echo=FALSE, message=FALSE}
-dfDisplay <- lstClaimPois$Claims %>% 
+dfDisplay <- dfAllVariable %>% 
   arrange(PolicyID) %>% 
   head(10)
 
