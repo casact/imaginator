@@ -9,6 +9,8 @@
 #'
 #' @return A function
 #'
+#' @importFrom stats rnorm
+#'
 #' @export
 NormalHelper <- function(mean, sd, lowerBound, upperBound){
   hasLower <- !missing(lowerBound)
@@ -29,6 +31,8 @@ NormalHelper <- function(mean, sd, lowerBound, upperBound){
 #' @param max The maximum value
 #'
 #' @return A function
+#'
+#' @importFrom stats runif
 #'
 #' @export
 UniformHelper <- function(min, max){
