@@ -1,8 +1,4 @@
-EmptyClaimFrame <- function(){
-
-}
-
-#' @title Claims by evaluation date
+#' @title Claims by lag
 #'
 #' @description
 #' Given a data frame of policies, this will simulate claims
@@ -11,7 +7,7 @@ EmptyClaimFrame <- function(){
 #' @param Frequency A function which will randomly generate number of claims
 #' @param Severity A function which will randomly generate the severity of each claim
 #' @param Links A list of functions which dictates how severities change from one evaluation date to the next
-#' @param EvaluationDates A vector of evaluation dates
+#' @param Lags A vector of lags
 #'
 #' @details
 #' The claim amounts are presumed to be cumulative
@@ -22,9 +18,9 @@ EmptyClaimFrame <- function(){
 #'
 #' @importFrom magrittr %>%
 #'
-ClaimsByEvaluationDate <- function(dfPolicy, Frequency, Severity, Links, EvaluationDates){
+ClaimsByLag <- function(dfPolicy, Frequency, Severity, Links, Lags){
 
-  numEvals <- length(EvaluationDates)
+numLags <- length(Lags)
 
   numPolicies <- nrow(dfPolicy)
   claimFrequencies <- Frequency(numPolicies)
@@ -34,16 +30,16 @@ ClaimsByEvaluationDate <- function(dfPolicy, Frequency, Severity, Links, Evaluat
   currSeverity <- Severity(totalClaims)
 
   dfClaims <- data.frame(PolicyID = policyIds
-                         , EvaluationDate = EvaluationDates[1]
+                         , Lag = Lags[1]
                          , ClaimValue = currSeverity
                          , stringsAsFactors = FALSE)
 
   # If we only have one evaluation date, then we don't need to loop. We'll
   # leave the function early rather than putting crazy controls on the loop
-  if (numEvals == 1){
+  if (numLags == 1){
     return(dfClaims)
   } else {
-    lstEvals <- vector("list", numEvals)
+    lstEvals <- vector("list", numLags)
     lstEvals[[1]] <- dfClaims
   }
 
@@ -52,7 +48,7 @@ ClaimsByEvaluationDate <- function(dfPolicy, Frequency, Severity, Links, Evaluat
 
     currSeverity <- currSeverity * links
     lstEvals[[iLink + 1]] <- data.frame(PolicyID = policyIds
-                                    , EvaluationDate = EvaluationDates[iLink + 1]
+                                    , Lag = Lags[iLink + 1]
                                     , ClaimValue = currSeverity
                                     , stringsAsFactors = FALSE)
   }

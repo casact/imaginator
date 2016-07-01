@@ -26,24 +26,23 @@ mySeverity <- GammaHelper(10000, 0.5)
 
 Note that we augment the policy table by adding a field for the number of claims.
 
-## Simulate by evaluation date
+## Simulate by lag date
 
 This is basically chain ladder.
 
-We'll create a very simple example with three evaluation dates, fixed frequency and fixed link ratios.
+We'll create a very simple example with three lag dates, fixed frequency and fixed link ratios.
 
 ```{r}
-evalDates <- seq.Date(as.Date("2010-12-31"), length.out = 3, by = "years")
 fixedLinks <- list(FixedVal(2)
                    , FixedVal(1.5))
 ```
 
 ```{r }
-dfClaimsFixed <- ClaimsByEvaluationDate(dfPolicy
-                                        , Frequency = FixedVal(1)
-                                        , Severity = FixedVal(100)
-                                        , Links = fixedLinks
-                                        , EvaluationDates = evalDates)
+dfClaimsFixed <- ClaimsByLag(dfPolicy
+                             , Frequency = FixedVal(1)
+                             , Severity = FixedVal(100)
+                             , Links = fixedLinks
+                             , Lags = 1:3)
 ```
 
 ```{r echo=FALSE, message=FALSE}
@@ -60,11 +59,11 @@ We can make things a bit more complicated by introducing variable link ratios
 normalLinks <- list(NormalHelper(2, 1, .7, 4)
                     , NormalHelper(1.5, .5, .7, 3))
 
-dfVariableLinks <- ClaimsByEvaluationDate(dfPolicy
-                                          , Frequency = FixedVal(1)
-                                          , Severity = FixedVal(100)
-                                          , Links = normalLinks
-                                          , EvaluationDates = evalDates)
+dfVariableLinks <- ClaimsByLag(dfPolicy
+                               , Frequency = FixedVal(1)
+                               , Severity = FixedVal(100)
+                               , Links = normalLinks
+                               , Lags = 1:3)
 ```
 
 ```{r echo=FALSE, message=FALSE}
@@ -79,11 +78,11 @@ And for lots of fun, let's use a Poisson frequency, gamma severity and variable 
 
 ```{r }
 set.seed(1234)
-dfAllVariable <- ClaimsByEvaluationDate(dfPolicy
-                                       , Frequency = PoissonHelper(1)
-                                       , Severity = GammaHelper(10000, 0.5)
-                                       , Links = normalLinks
-                                       , EvaluationDates = evalDates)
+dfAllVariable <- ClaimsByLag(dfPolicy
+                             , Frequency = PoissonHelper(1)
+                             , Severity = GammaHelper(10000, 0.5)
+                             , Links = normalLinks
+                             , Lags = 1:3)
 ```
 
 ```{r echo=FALSE, message=FALSE}
