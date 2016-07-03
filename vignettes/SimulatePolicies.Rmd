@@ -74,6 +74,8 @@ knitr::kable(dfDisplay)
 
 # Renew Policies
 
+Attrition equals renewal retention minus 1.
+
 ```{r}
 dfRenewal <- RenewPolicies(dfPolicy, Renewal = 0.65)
 ```
@@ -124,7 +126,7 @@ knitr::kable(dfDisplay)
 ```
 
 ```{r}
-dfTwoYears <- SimulatePolicies(1000, 2001:2002, Renewal = c(1, .9), Growth = c(0, .05))
+dfTwoYears <- SimulatePolicies(1000, 2001:2002, Renewal = .9, Growth = .05)
 ```
 
 ```{r echo=FALSE}
