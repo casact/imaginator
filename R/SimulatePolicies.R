@@ -1,3 +1,11 @@
+EmptyPolicyFrame <- function(){
+  data.frame(PolicyEffectiveDate = double(0)
+             , PolicyExpirationDate = double(0)
+             , Exposure = double(0)
+             , PolicyID = character(0)
+             , stringsAsFactors = FALSE)
+}
+
 PolicyTableColumnNames <- function(){
   c("PolicyEffectiveDate"
     , "PolicyExpirationDate"
@@ -56,11 +64,7 @@ GetPolicyIDs <- function(N){
 #'
 NewPolicies <- function(N, PolicyYear, Exposure = 1, AdditionalColumns){
 
-  dfPolicy <- data.frame(PolicyEffectiveDate = double(0)
-                         , PolicyExpirationDate = double(0)
-                         , Exposure = double(0)
-                         , PolicyID = character(0)
-                         , stringsAsFactors = FALSE)
+  dfPolicy <- EmptyPolicyFrame()
 
   if (N == 0) {
     return (dfPolicy)
@@ -136,8 +140,10 @@ RenewPolicies <- function(dfPolicy, Renewal){
 #' @export
 GrowPolicies <- function(dfPolicy, Growth){
   assertthat::assert_that(is.number(Growth))
-  assertthat::assert_that(Growth > 0)
+  assertthat::assert_that(Growth >= 0)
   assertthat::assert_that(nrow(dfPolicy) > 0)
+
+  if (Growth == 0) return (EmptyPolicyFrame())
 
   newBizCount <- as.integer(round(nrow(dfPolicy) * Growth))
 
@@ -204,6 +210,7 @@ IncrementPolicyYear <- function(dfPolicy, Renewal, Growth){
 SimulatePolicies <- function(N, PolicyYears, Exposure = 1, Renewal, Growth, AdditionalColumns)
 {
 
+  # assert that renewal and growth are numeric vectors of length one less than PolicyYears
   numYears <- length(PolicyYears)
 
   lstDF <- vector("list", numYears)
@@ -211,9 +218,7 @@ SimulatePolicies <- function(N, PolicyYears, Exposure = 1, Renewal, Growth, Addi
   lstDF[[1]] <- NewPolicies(N, PolicyYears[1], Exposure, AdditionalColumns)
 
   for (iYear in seq.int(2, numYears)){
-    # lstDF[[iYear]] <- IncrementPolicyYear(lstDF[[iYear - 1]], Renewal[iYear], Growth[iYear])
-
-    lstDF[[iYear]] <- IncrementPolicyYear(lstDF[[iYear - 1]], Renewal[iYear], Growth[iYear])
+    lstDF[[iYear]] <- IncrementPolicyYear(lstDF[[iYear - 1]], Renewal[iYear - 1], Growth[iYear - 1])
   }
 
   dfPolicy <- do.call(rbind, lstDF)
