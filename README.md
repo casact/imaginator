@@ -1,6 +1,8 @@
 [![Travis-CI Build Status](https://travis-ci.org/PirateGrunt/imagine.svg?branch=master)](https://travis-ci.org/PirateGrunt/imagine)
 [![GitHub version](https://badge.fury.io/gh/PirateGrunt%2Fimagine.svg)](https://badge.fury.io/gh/PirateGrunt%2Fimagine)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/imagine)](http://cran.r-project.org/package=imagine)
+[![codecov](https://codecov.io/gh/PirateGrunt/imagine/branch/master/graph/badge.svg)](https://codecov.io/gh/PirateGrunt/imagine)
+[![Coverage Status](https://coveralls.io/repos/github/PirateGrunt/imagine/badge.svg?branch=master)](https://coveralls.io/github/PirateGrunt/imagine?branch=master)
 
 # imagine
 
