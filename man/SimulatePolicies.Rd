@@ -4,7 +4,7 @@
 \alias{SimulatePolicies}
 \title{Simulate a data frame of policies}
 \usage{
-SimulatePolicies(N, PolicyYears, Exposure = 1, Renewal, Growth,
+SimulatePolicies(N, PolicyYears, Exposure = 1, Renewal, Growth, StartID = 1,
   AdditionalColumns)
 }
 \arguments{
@@ -17,6 +17,8 @@ SimulatePolicies(N, PolicyYears, Exposure = 1, Renewal, Growth,
 \item{Renewal}{A vector indicating loss of policies}
 
 \item{Growth}{A vector indicating the rate of growth of policies}
+
+\item{StartID}{Integer of the first number in the policy ID sequence}
 
 \item{AdditionalColumns}{A list of addtional column names and values}
 }

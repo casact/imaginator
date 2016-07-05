@@ -4,7 +4,7 @@
 \alias{NewPolicies}
 \title{Simulate a new set of policies}
 \usage{
-NewPolicies(N, PolicyYear, Exposure = 1, AdditionalColumns)
+NewPolicies(N, PolicyYear, Exposure = 1, StartID = 1, AdditionalColumns)
 }
 \arguments{
 \item{N}{The number of policies to generate}
@@ -12,6 +12,8 @@ NewPolicies(N, PolicyYear, Exposure = 1, AdditionalColumns)
 \item{PolicyYear}{Scalar integer indicating the policy year to generate}
 
 \item{Exposure}{Vector of exposures}
+
+\item{StartID}{Integer of the first number in the policy ID sequence}
 
 \item{AdditionalColumns}{A list of addtional column names and values}
 }

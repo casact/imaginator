@@ -26,19 +26,6 @@ GetExpirationDate <- function(EffectiveDate){
 
 }
 
-#' @importFrom stringi stri_rand_strings
-GetPolicyIDs <- function(N){
-  policyID_length <- as.integer(log(N, 36)) + 1
-
-  numPortion <- stringi::stri_rand_strings(N, policyID_length, pattern = "[0-9]")
-
-  charPortion <- stringi::stri_rand_strings(N, policyID_length, pattern = "[A-Z]")
-
-  policyID <- paste(numPortion, charPortion, sep = "-")
-
-  policyID
-}
-
 #' @title Simulate a new set of policies
 #'
 #' @description This will generate a data frame of policy data. This may be used to construct renewal and growth
@@ -47,6 +34,7 @@ GetPolicyIDs <- function(N){
 #' @param N The number of policies to generate
 #' @param PolicyYear Scalar integer indicating the policy year to generate
 #' @param Exposure Vector of exposures
+#' @param StartID Integer of the first number in the policy ID sequence
 #' @param AdditionalColumns A list of addtional column names and values
 #'
 #' @return Data frame of policy data
@@ -62,7 +50,7 @@ GetPolicyIDs <- function(N){
 #' @importFrom lubridate ymd
 #' @importFrom lubridate days
 #'
-NewPolicies <- function(N, PolicyYear, Exposure = 1, AdditionalColumns){
+NewPolicies <- function(N, PolicyYear, Exposure = 1, StartID = 1, AdditionalColumns){
 
   dfPolicy <- EmptyPolicyFrame()
 
@@ -80,7 +68,7 @@ NewPolicies <- function(N, PolicyYear, Exposure = 1, AdditionalColumns){
   dfPolicy <- data.frame(PolicyEffectiveDate = effectiveDates
                          , PolicyExpirationDate = expirationDates
                          , Exposure = Exposure
-                         , PolicyID = GetPolicyIDs(N)
+                         , PolicyID = seq.int(StartID, length.out = N)
                          , stringsAsFactors = FALSE)
 
   if (!missing(AdditionalColumns)){
@@ -152,12 +140,14 @@ GrowPolicies <- function(dfPolicy, Growth){
 
   addColumns <- setdiff(names(dfOneRow), PolicyTableColumnNames())
 
+  maxPolicyID <- max(dfPolicy$PolicyID)
+
   if (length(addColumns) > 0){
     addColumns <- dfOneRow[, addColumns, drop = FALSE]
     addColumns <- as.list(addColumns)
-    dfNew <- NewPolicies(N = newBizCount, PolicyYear = policyYear, AdditionalColumns = addColumns)
+    dfNew <- NewPolicies(N = newBizCount, PolicyYear = policyYear, StartID = maxPolicyID + 1, AdditionalColumns = addColumns)
   } else {
-    dfNew <- NewPolicies(N = newBizCount, PolicyYear = policyYear)
+    dfNew <- NewPolicies(N = newBizCount, PolicyYear = policyYear, StartID = maxPolicyID + 1)
   }
 
   dfNew
@@ -199,6 +189,7 @@ IncrementPolicyYear <- function(dfPolicy, Renewal, Growth){
 #' @param Exposure Exposure per policy
 #' @param Renewal A vector indicating loss of policies
 #' @param Growth A vector indicating the rate of growth of policies
+#' @param StartID Integer of the first number in the policy ID sequence
 #' @param AdditionalColumns A list of addtional column names and values
 #'
 #' @return A data frame of policy data
@@ -207,7 +198,7 @@ IncrementPolicyYear <- function(dfPolicy, Renewal, Growth){
 #' @importFrom lubridate years
 #' @importFrom lubridate ymd
 #'
-SimulatePolicies <- function(N, PolicyYears, Exposure = 1, Renewal, Growth, AdditionalColumns)
+SimulatePolicies <- function(N, PolicyYears, Exposure = 1, Renewal, Growth, StartID = 1, AdditionalColumns)
 {
 
   # assert that renewal and growth are numeric vectors of length one less than PolicyYears
@@ -215,7 +206,7 @@ SimulatePolicies <- function(N, PolicyYears, Exposure = 1, Renewal, Growth, Addi
 
   lstDF <- vector("list", numYears)
 
-  lstDF[[1]] <- NewPolicies(N, PolicyYears[1], Exposure, AdditionalColumns)
+  lstDF[[1]] <- NewPolicies(N, PolicyYears[1], Exposure, StartID, AdditionalColumns)
 
   for (iYear in seq.int(2, numYears)){
     lstDF[[iYear]] <- IncrementPolicyYear(lstDF[[iYear - 1]], Renewal[iYear - 1], Growth[iYear - 1])
