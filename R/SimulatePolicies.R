@@ -7,20 +7,19 @@ EmptyPolicyFrame <- function(){
 }
 
 PolicyTableColumnNames <- function(){
-  c("PolicyEffectiveDate"
-    , "PolicyExpirationDate"
-    , "Exposure"
-    , "PolicyID")
+  names(EmptyPolicyFrame())
 }
 
 #' @importFrom lubridate year
+#' @importFrom lubridate leap_year
+#' @importFrom lubridate days
 GetExpirationDate <- function(EffectiveDate){
   policyYear <- lubridate::year(EffectiveDate)
-  ExpirationDate <- EffectiveDate + days(364)
+  ExpirationDate <- EffectiveDate + lubridate::days(364)
 
   addOne <- lubridate::leap_year(lubridate::year(ExpirationDate))
 
-  ExpirationDate[addOne] <- ExpirationDate[addOne] + days(1)
+  ExpirationDate[addOne] <- ExpirationDate[addOne] + lubridate::days(1)
 
   ExpirationDate
 
@@ -49,6 +48,7 @@ GetExpirationDate <- function(EffectiveDate){
 #'
 #' @importFrom lubridate ymd
 #' @importFrom lubridate days
+#' @importFrom lubridate leap_year
 #'
 NewPolicies <- function(N, PolicyYear, Exposure = 1, StartID = 1, AdditionalColumns){
 
@@ -106,7 +106,7 @@ RenewPolicies <- function(dfPolicy, Renewal){
   renewals <- base::sample(seq.int(nrow(dfPolicy)), size = renewals)
   dfPolicy <- dfPolicy[renewals, ]
 
-  dfPolicy$PolicyEffectiveDate <- dfPolicy$PolicyExpirationDate +  days(1)
+  dfPolicy$PolicyEffectiveDate <- dfPolicy$PolicyExpirationDate + lubridate::days(1)
   dfPolicy$PolicyExpirationDate <- GetExpirationDate(dfPolicy$PolicyEffectiveDate)
 
   dfPolicy
