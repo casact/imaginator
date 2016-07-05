@@ -28,9 +28,12 @@ ClaimsByLag <- function(dfPolicy, Frequency, Severity, Links, Lags){
   claimIDs <- seq.int(totalClaims)
 
   policyIds <- mapply(rep, dfPolicy$PolicyID, claimFrequencies) %>% unlist()
+  effectiveDates <- mapply(rep, dfPolicy$PolicyEffectiveDate, claimFrequencies, SIMPLIFY = FALSE)
+  effectiveDates <- do.call("c", effectiveDates)
   currSeverity <- Severity(totalClaims)
 
   dfClaims <- data.frame(PolicyID = policyIds
+                         , PolicyEffectiveDate = effectiveDates
                          , ClaimID = claimIDs
                          , Lag = Lags[1]
                          , ClaimValue = currSeverity
@@ -50,10 +53,11 @@ ClaimsByLag <- function(dfPolicy, Frequency, Severity, Links, Lags){
 
     currSeverity <- currSeverity * links
     lstEvals[[iLink + 1]] <- data.frame(PolicyID = policyIds
+                                        , PolicyEffectiveDate = effectiveDates
                                         , ClaimID = claimIDs
-                                    , Lag = Lags[iLink + 1]
-                                    , ClaimValue = currSeverity
-                                    , stringsAsFactors = FALSE)
+                                        , Lag = Lags[iLink + 1]
+                                        , ClaimValue = currSeverity
+                                        , stringsAsFactors = FALSE)
   }
 
   # emptyFrames <- sapply(lstClaims, is.null)
