@@ -20,16 +20,18 @@
 #'
 ClaimsByLag <- function(dfPolicy, Frequency, Severity, Links, Lags){
 
-numLags <- length(Lags)
+  numLags <- length(Lags)
 
   numPolicies <- nrow(dfPolicy)
   claimFrequencies <- Frequency(numPolicies)
   totalClaims <- sum(claimFrequencies)
+  claimIDs <- seq.int(totalClaims)
 
   policyIds <- mapply(rep, dfPolicy$PolicyID, claimFrequencies) %>% unlist()
   currSeverity <- Severity(totalClaims)
 
   dfClaims <- data.frame(PolicyID = policyIds
+                         , ClaimID = claimIDs
                          , Lag = Lags[1]
                          , ClaimValue = currSeverity
                          , stringsAsFactors = FALSE)
@@ -48,6 +50,7 @@ numLags <- length(Lags)
 
     currSeverity <- currSeverity * links
     lstEvals[[iLink + 1]] <- data.frame(PolicyID = policyIds
+                                        , ClaimID = claimIDs
                                     , Lag = Lags[iLink + 1]
                                     , ClaimValue = currSeverity
                                     , stringsAsFactors = FALSE)
