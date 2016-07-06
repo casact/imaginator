@@ -15,12 +15,20 @@
 NormalHelper <- function(mean, sd, lowerBound, upperBound){
   hasLower <- !missing(lowerBound)
   hasUpper <- !missing(upperBound)
+
+  myMean <- mean
+  mySD <- sd
+  myLower <- lowerBound
+  myUpper <- upperBound
   theFunc <- function(n){
-    z <- rnorm(n, mean, sd)
-    if (hasLower) z <- pmax(z, lowerBound)
-    if (hasUpper) z <- pmin(z, upperBound)
+    z <- rnorm(n, myMean, mySD)
+    if (hasLower) z <- pmax(z, myLower)
+    if (hasUpper) z <- pmin(z, myUpper)
     z
   }
+
+  theFunc
+
 }
 
 #' UniformHelper
