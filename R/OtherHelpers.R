@@ -18,8 +18,8 @@ NormalHelper <- function(mean, sd, lowerBound, upperBound){
 
   myMean <- mean
   mySD <- sd
-  myLower <- lowerBound
-  myUpper <- upperBound
+  if (hasLower) myLower <- lowerBound
+  if (hasUpper) myUpper <- upperBound
   theFunc <- function(n){
     z <- rnorm(n, myMean, mySD)
     if (hasLower) z <- pmax(z, myLower)
