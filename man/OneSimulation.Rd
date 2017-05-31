@@ -36,4 +36,3 @@ OneSimulation(AY = 0:5, freqFn = stats::rnorm, freqArgs = list(40,
 \description{
 Construct a data frame of simulated claims.
 }
-

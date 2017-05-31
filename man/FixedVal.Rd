@@ -15,4 +15,3 @@ A function
 \description{
 Returns the same, non-stochastic, value
 }
-

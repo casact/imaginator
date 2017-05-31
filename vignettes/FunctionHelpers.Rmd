@@ -9,12 +9,12 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-The `imagine` package relies on random number generators which don't use parameters. This makes the simulation interface cleaner.
+The `imaginator` package relies on random number generators which don't use parameters. This makes the simulation interface cleaner.
 
 ## Frequency
 
 ```{r}
-library(imagine)
+library(imaginator)
 pois5 <- PoissonHelper(5)
 pois10 <- PoissonHelper(10)
 ```

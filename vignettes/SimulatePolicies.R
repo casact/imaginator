@@ -1,5 +1,27 @@
 ## ------------------------------------------------------------------------
-library(imagine)
+dfPolicies <- SimulatePolicies(N = 10, PolicyYears = 5)
+
+## ------------------------------------------------------------------------
+dfPolicies <- SimulatePolicies(N = 100
+                               , NumYears = 5
+                               , Retention = 0.9
+                               , Growth = 0.1)
+
+## ------------------------------------------------------------------------
+# Gradually expanding book of business
+dfPolicies <- SimulatePolicies(N = 100
+                               , PolicyYears = 5
+                               , Retention = 0.9
+                               , Growth = 0.2)
+
+# Gradually contracting book of business
+dfPolicies <- SimulatePolicies(N = 100
+                               , PolicyYears = 5
+                               , Retention = 0.8
+                               , Growth = 0.1)
+
+## ------------------------------------------------------------------------
+library(imaginator)
 set.seed(1234)
 dfPolicy <- NewPolicies(N = 5000, 2001, 1)
 
@@ -23,7 +45,7 @@ dfDisplay <- dfGL %>%
 knitr::kable(dfDisplay)
 
 ## ------------------------------------------------------------------------
-dfRenewal <- RenewPolicies(dfPolicy, Renewal = 0.65)
+dfRenewal <- RenewPolicies(dfPolicy, Retention = 0.65)
 
 ## ----echo=FALSE----------------------------------------------------------
 dfDisplay <- dfRenewal %>% 
@@ -46,7 +68,7 @@ dfDisplay <- dfGrowth %>%
 knitr::kable(dfDisplay)
 
 ## ------------------------------------------------------------------------
-dfNextYear <- IncrementPolicyYear(dfGL, Renewal = 0.65, Growth = 0.1)
+dfNextYear <- IncrementPolicyYear(dfGL, Retention = 0.65, Growth = 0.1)
 
 ## ----echo=FALSE----------------------------------------------------------
 dfDisplay <- dfNextYear %>% 
@@ -56,7 +78,7 @@ dfDisplay <- dfNextYear %>%
 knitr::kable(dfDisplay)
 
 ## ------------------------------------------------------------------------
-dfTwoYears <- SimulatePolicies(1000, 2001:2002, Renewal = .9, Growth = .05)
+dfTwoYears <- SimulatePolicies(1000, 2001:2002, Retention = .9, Growth = .05)
 
 ## ----echo=FALSE----------------------------------------------------------
 dfDisplay <- dfNextYear %>% 

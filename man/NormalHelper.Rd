@@ -21,4 +21,3 @@ A function
 \description{
 Returns a normal distribution with optional bounds on the returned values
 }
-

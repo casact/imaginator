@@ -4,12 +4,12 @@
 \alias{IncrementPolicyYear}
 \title{Incremental a policy year}
 \usage{
-IncrementPolicyYear(dfPolicy, Renewal, Growth)
+IncrementPolicyYear(dfPolicy, Retention, Growth)
 }
 \arguments{
 \item{dfPolicy}{A policy data frame}
 
-\item{Renewal}{Scalar renewal rate}
+\item{Retention}{Scalar renewal rate}
 
 \item{Growth}{Scalar growth rate}
 }
@@ -20,4 +20,3 @@ Policy data frame
 Given a policy data frame, this will combine the \code{GrowPolicies} and \code{RenewPolicies} functions
 to produce a subsequent policy year.
 }
-

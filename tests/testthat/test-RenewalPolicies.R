@@ -11,6 +11,6 @@ test_that("Leap year works", {
   expect_equal(dfRenew$PolicyExpirationDate, as.Date("2016-02-29"))
 })
 
-test_that("Proper renewal", {
-  expect
-})
+# test_that("Proper renewal", {
+#   expect
+# })

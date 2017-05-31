@@ -60,7 +60,8 @@ NewPolicies <- function(N, PolicyYear, Exposure = 1, StartID = 1, AdditionalColu
 
   days <- 365 + ifelse(lubridate::leap_year(PolicyYear), 1, 0)
   days <- days - 1
-  effectiveDates <- lubridate::ymd(paste(PolicyYear, "01", "01", sep="-"))
+  strDayOne <- paste(sprintf("%04d", PolicyYear), "01", "01", sep="-")
+  effectiveDates <- lubridate::ymd(strDayOne)
   dayOffsets <- sample(days, size = N, replace = TRUE)
   effectiveDates <- effectiveDates + lubridate::days(dayOffsets)
   expirationDates <- GetExpirationDate(effectiveDates)
@@ -85,12 +86,12 @@ NewPolicies <- function(N, PolicyYear, Exposure = 1, StartID = 1, AdditionalColu
 #' @title Simulate policy renewal
 #'
 #' @description Given a policy data frame, this will construct renewal data frames. The number of policies which
-#' renew is governed by the the \code{Renewal} parameter.
+#' renew is governed by the the \code{Retention} parameter.
 #'
 #' @name RenewPolicies
 #'
 #' @param dfPolicy Data frame of policy data
-#' @param Renewal Scalar value greater than or equal to zero
+#' @param Retention Scalar value greater than or equal to zero
 #'
 #' @importFrom assertthat assert_that
 #' @importFrom assertthat is.number
@@ -98,11 +99,11 @@ NewPolicies <- function(N, PolicyYear, Exposure = 1, StartID = 1, AdditionalColu
 #' @importFrom lubridate leap_year
 #'
 #' @export
-RenewPolicies <- function(dfPolicy, Renewal){
-  assertthat::assert_that(is.number(Renewal))
-  assertthat::assert_that(Renewal >= 0, Renewal <= 1)
+RenewPolicies <- function(dfPolicy, Retention){
+  assertthat::assert_that(is.number(Retention))
+  assertthat::assert_that(Retention >= 0, Retention <= 1)
 
-  renewals <- nrow(dfPolicy) * Renewal
+  renewals <- nrow(dfPolicy) * Retention
   renewals <- base::sample(seq.int(nrow(dfPolicy)), size = renewals)
   dfPolicy <- dfPolicy[renewals, ]
 
@@ -161,20 +162,40 @@ GrowPolicies <- function(dfPolicy, Growth){
 #' @name IncrementPolicyYear
 #'
 #' @param dfPolicy A policy data frame
-#' @param Renewal Scalar renewal rate
+#' @param Retention Scalar renewal rate
 #' @param Growth Scalar growth rate
 #'
 #' @return Policy data frame
 #'
 #' @export
-IncrementPolicyYear <- function(dfPolicy, Renewal, Growth){
-  dfRenew <- RenewPolicies(dfPolicy, Renewal)
+IncrementPolicyYear <- function(dfPolicy, Retention, Growth){
+  dfRenew <- RenewPolicies(dfPolicy, Retention)
 
   dfNew <- GrowPolicies(dfPolicy, Growth)
 
   dfPolicy <- rbind(dfRenew, dfNew)
 
   dfPolicy
+}
+
+FixGrowthVector <- function(vecIn, numRenewals, vec_kind)
+{
+
+  if (length(vecIn) == 1) {
+    vecIn <- rep(vecIn, length.out = numRenewals)
+  }
+
+  if (length(vecIn) < numRenewals) {
+    message(paste(vec_kind, "vector is > 1, but too short. It will be padded."))
+    vecIn = rep(vecIn, length.out = numRenewals)
+  }
+
+  if (length(vecIn) > numRenewals) {
+    message(paste(vec_kind, "vector is too long. It will be truncated."))
+    vecIn = head(vecIn, numRenewals)
+  }
+
+  vecIn
 }
 
 #' @title Simulate a data frame of policies
@@ -186,8 +207,9 @@ IncrementPolicyYear <- function(dfPolicy, Renewal, Growth){
 #'
 #' @param N An integer giving the number of policies in the first year
 #' @param PolicyYears A vector of integers in sequence
+#' @param NumYears The number of years to simulate. If `PolicyYears` is given, this is ignored.
 #' @param Exposure Exposure per policy
-#' @param Renewal A vector indicating loss of policies
+#' @param Retention A vector indicating loss of policies
 #' @param Growth A vector indicating the rate of growth of policies
 #' @param StartID Integer of the first number in the policy ID sequence
 #' @param AdditionalColumns A list of addtional column names and values
@@ -198,18 +220,42 @@ IncrementPolicyYear <- function(dfPolicy, Renewal, Growth){
 #' @importFrom lubridate years
 #' @importFrom lubridate ymd
 #'
-SimulatePolicies <- function(N, PolicyYears, Exposure = 1, Renewal, Growth, StartID = 1, AdditionalColumns)
+#' @description Growth is given as a the positive rate of growth of new policies. This may be set to zero.
+#'
+#' Retention is given as the portion of expiring policies which will renew.
+#'
+SimulatePolicies <- function(N, PolicyYears, NumYears, Exposure = 1, Retention = 1, Growth = 0, StartID = 1, AdditionalColumns)
 {
 
-  # assert that renewal and growth are numeric vectors of length one less than PolicyYears
-  numYears <- length(PolicyYears)
+  if (missing(PolicyYears)) {
+    if (missing(NumYears)) {
+      stop("At least one of PolicyYears or NumYears must be given.")
+    }
+    numYears <- NumYears
+    PolicyYears <- seq.int(2000, length.out = numYears)
+  } else {
+    if (min(PolicyYears) <= 0) {
+      stop("PolicyYears can't be negative")
+    }
+    if (length(PolicyYears) != (max(PolicyYears) - min(PolicyYears) + 1)) {
+      stop("PolicyYears must be a sequence.")
+    }
+    numYears <- length(PolicyYears)
+  }
+  numRenewals <- numYears - 1
 
-  lstDF <- vector("list", numYears)
+  Retention <- FixGrowthVector(Retention, numRenewals, "Retention")
+  Growth <- FixGrowthVector(Growth, numRenewals, "Growth")
 
-  lstDF[[1]] <- NewPolicies(N, PolicyYears[1], Exposure, StartID, AdditionalColumns)
+  if (numYears == 1) {
+    return (NewPolicies(N, PolicyYears[1], Exposure, StartID, AdditionalColumns))
+  } else {
+    lstDF <- vector("list", numYears)
+    lstDF[[1]] <- NewPolicies(N, PolicyYears[1], Exposure, StartID, AdditionalColumns)
+  }
 
   for (iYear in seq.int(2, numYears)){
-    lstDF[[iYear]] <- IncrementPolicyYear(lstDF[[iYear - 1]], Renewal[iYear - 1], Growth[iYear - 1])
+    lstDF[[iYear]] <- IncrementPolicyYear(lstDF[[iYear - 1]], Retention[iYear - 1], Growth[iYear - 1])
   }
 
   dfPolicy <- do.call(rbind, lstDF)

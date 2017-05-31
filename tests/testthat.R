@@ -1,4 +1,4 @@
 library(testthat)
-library(imagine)
+library(imaginator)
 
-test_check("imagine")
+test_check("imaginator")

@@ -17,4 +17,3 @@ A function
 \description{
 Returns a uniform distribution function
 }
-

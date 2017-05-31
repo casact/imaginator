@@ -1,4 +1,4 @@
-Package: imagine
+Package: imaginator
 Title: Simulate general insurance policies and losses
 Version: 0.1.0
 Authors@R: person("Brian", "Fannin", email = "FanninQED@Yahoo.com", role = c("aut", "cre"))
@@ -19,4 +19,4 @@ Suggests:
     rmarkdown,
     ggplot2
 VignetteBuilder: knitr
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1

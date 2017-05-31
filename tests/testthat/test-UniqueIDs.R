@@ -30,7 +30,7 @@ test_that("IncrementID", {
 
   expect_gt(min(dfPolicy2$PolicyID), max(dfPolicy$PolicyID))
 
-  dfPolicy <- SimulatePolicies(10, 2000:2001, Renewal = 0, Growth = 1)
+  dfPolicy <- SimulatePolicies(10, 2000:2001, Retention = 0, Growth = 1)
 
   expect_equal(length(unique(dfPolicy$PolicyID)), nrow(dfPolicy))
 

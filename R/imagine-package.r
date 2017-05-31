@@ -1,6 +1,6 @@
-#' imagine
+#' imaginator
 #'
-#' @name imagine
+#' @name imaginator
 #' @docType package
 #'
 #' @description

@@ -26,4 +26,3 @@ Given a data frame of policies, this will simulate claims
 \details{
 The claim amounts are presumed to be cumulative
 }
-

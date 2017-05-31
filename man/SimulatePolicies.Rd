@@ -4,17 +4,19 @@
 \alias{SimulatePolicies}
 \title{Simulate a data frame of policies}
 \usage{
-SimulatePolicies(N, PolicyYears, Exposure = 1, Renewal, Growth, StartID = 1,
-  AdditionalColumns)
+SimulatePolicies(N, PolicyYears, NumYears, Exposure = 1, Retention = 1,
+  Growth = 1, StartID = 1, AdditionalColumns)
 }
 \arguments{
 \item{N}{An integer giving the number of policies in the first year}
 
 \item{PolicyYears}{A vector of integers in sequence}
 
+\item{NumYears}{The number of years to simulate. If `PolicyYears` is given, this is ignored.}
+
 \item{Exposure}{Exposure per policy}
 
-\item{Renewal}{A vector indicating loss of policies}
+\item{Retention}{A vector indicating loss of policies}
 
 \item{Growth}{A vector indicating the rate of growth of policies}
 
@@ -27,5 +29,8 @@ A data frame of policy data
 }
 \description{
 Given a starting number of policies, this function will generate additional years of policy data.
-}
 
+Growth is given as a the positive rate of growth of new policies. This may be set to zero.
+
+Retention is given as the portion of expiring policies which will renew.
+}

@@ -30,4 +30,3 @@ year.
 
 When providing additional columns, each element of the list must be a scalar and be named.
 }
-

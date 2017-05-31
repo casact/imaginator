@@ -14,4 +14,3 @@ GrowPolicies(dfPolicy, Growth)
 \description{
 Given a policy data frame, this will generate new policies in subsequent policy years.
 }
-

@@ -16,7 +16,7 @@ library(dplyr)
 ## Overview
 
 ```{r}
-library(imagine)
+library(imaginator)
 dfPolicy <- NewPolicies(500, 2010)
 ```
 

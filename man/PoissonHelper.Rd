@@ -15,4 +15,3 @@ A function
 \description{
 This will return a poisson random number generator with a user-defined mean.
 }
-

@@ -4,15 +4,14 @@
 \alias{RenewPolicies}
 \title{Simulate policy renewal}
 \usage{
-RenewPolicies(dfPolicy, Renewal)
+RenewPolicies(dfPolicy, Retention)
 }
 \arguments{
 \item{dfPolicy}{Data frame of policy data}
 
-\item{Renewal}{Scalar value greater than or equal to zero}
+\item{Retention}{Scalar value greater than or equal to zero}
 }
 \description{
 Given a policy data frame, this will construct renewal data frames. The number of policies which
-renew is governed by the the \code{Renewal} parameter.
+renew is governed by the the \code{Retention} parameter.
 }
-

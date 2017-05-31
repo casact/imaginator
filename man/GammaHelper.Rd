@@ -14,4 +14,3 @@ GammaHelper(alpha, beta)
 \description{
 This will create a random number generator for the gamma function.
 }
-

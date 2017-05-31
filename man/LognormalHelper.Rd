@@ -14,4 +14,3 @@ LognormalHelper(meanlog, sdlog)
 \description{
 This will create a random number generator for the lognormal function
 }
-
