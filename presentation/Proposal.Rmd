@@ -1,0 +1,15 @@
+---
+title: "Imaginator: An R Package for Claim Simulation"
+---
+
+Description:
+For some years now, there has been a publicly available data set of aggregate losses exist. This has been a great boon to researchers who are able to test loss reserving methods against actual data. However, there is nothing comparable for individual claims. The R package that I will present is a platform-independent simulation tool which is highly customizable and capable of generating data for virutally any practical scenario.  
+
+Learning Objective 1:
+Participants will see how this package may be used to generate data which eanbles the assessment of the efficacy of various reserving techniques - including those meant to be applied to individual claims.
+
+Learning Objective 2:
+Understand how one may simulate policy renewal, contraction and growth, associate claims with exposure and consider various loss generating processes.
+
+Learning Objective 3:
+Participants will gain an understanding of previously proposed random simulation methods like that proposed by Stanard, the Loss Simulation Model Working Party and others.

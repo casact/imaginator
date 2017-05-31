@@ -1,0 +1,12 @@
+---
+title: 'imaginator: An R package for claim simulation'
+author: "Brian A. Fannin"
+date: "May 31, 2017"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## We want theFunc
