@@ -17,3 +17,8 @@ PoissonHelper <- function(lambda){
   poisHelp
 
 }
+
+# TODO:
+# binomial
+# zero-inflated binomial
+# zero-inflated poisson
