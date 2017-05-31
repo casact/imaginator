@@ -1,8 +1,10 @@
 ## ------------------------------------------------------------------------
-dfPolicies <- SimulatePolicies(N = 10, PolicyYears = 5)
+library(imaginator)
+set.seed(1234)
+dfPolicies <- SimulatePolicies(N = 10, NumYears = 5)
 
 ## ------------------------------------------------------------------------
-dfPolicies <- SimulatePolicies(N = 100
+dfPolicies <- SimulatePolicies(N = 10
                                , NumYears = 5
                                , Retention = 0.9
                                , Growth = 0.1)
@@ -10,80 +12,62 @@ dfPolicies <- SimulatePolicies(N = 100
 ## ------------------------------------------------------------------------
 # Gradually expanding book of business
 dfPolicies <- SimulatePolicies(N = 100
-                               , PolicyYears = 5
+                               , NumYears = 5
                                , Retention = 0.9
                                , Growth = 0.2)
 
 # Gradually contracting book of business
 dfPolicies <- SimulatePolicies(N = 100
-                               , PolicyYears = 5
+                               , NumYears = 5
                                , Retention = 0.8
                                , Growth = 0.1)
 
 ## ------------------------------------------------------------------------
-library(imaginator)
-set.seed(1234)
-dfPolicy <- NewPolicies(N = 5000, 2001, 1)
+dfPolicies <- SimulatePolicies(N = 100
+                               , NumYears = 5
+                               , Retention = 0.0
+                               , Growth = 1.0)
 
-## ----echo=FALSE, message=FALSE-------------------------------------------
+## ------------------------------------------------------------------------
+dfPolicies <- SimulatePolicies(N = 100
+                               , NumYears = 5
+                               , Retention = c(0.95, 0.9, 0.85, 0.8)
+                               , Growth = c(0.25, 0.2, 0.1, 0.05))
+
+## ------------------------------------------------------------------------
+dfPolicies <- SimulatePolicies(N = 100
+                               , NumYears = 5
+                               , Retention = 0.9
+                               , Growth = runif(4, .05, .15))
+
+## ----eval=FALSE----------------------------------------------------------
+#  dfRenewals <- RenewPolicies(dfMyData, Retention = 0.8)
+#  dfNewBusiness <- GrowPolicies(dfMyData, 0.2)
+
+## ------------------------------------------------------------------------
+dfGL_CA <- SimulatePolicies(N = 5
+                            , NumYears = 5
+                            , AdditionalColumns = list(Line = "GL", State = "CA"))
+
+## ----echo=FALSE----------------------------------------------------------
 library(dplyr)
-dfDisplay <- dfPolicy %>% 
+dfGL_CA %>% 
   arrange(PolicyID) %>% 
-  head()
-
-knitr::kable(dfDisplay)
+  head() %>% 
+  knitr::kable()
 
 ## ------------------------------------------------------------------------
-set.seed(1234)
-dfGL <- NewPolicies(N = 5000, 2001, 1, AdditionalColumns = list(Line = "GL", State = "CA"))
+dfGL_CA <- SimulatePolicies(N = 500
+                            , NumYears = 5
+                            , AdditionalColumns = list(Line = "GL", State = "CA")
+                            , Retention = 0.5
+                            , Growth = .01)
 
-## ----echo=FALSE----------------------------------------------------------
-dfDisplay <- dfGL %>% 
-  arrange(PolicyID) %>% 
-  head()
+dfGL_NY <- SimulatePolicies(N = 50
+                            , NumYears = 5
+                            , AdditionalColumns = list(Line = "GL", State = "NY")
+                            , Retention = 0.9
+                            , Growth = .5)
 
-knitr::kable(dfDisplay)
-
-## ------------------------------------------------------------------------
-dfRenewal <- RenewPolicies(dfPolicy, Retention = 0.65)
-
-## ----echo=FALSE----------------------------------------------------------
-dfDisplay <- dfRenewal %>% 
-  arrange(PolicyID) %>% 
-  head()
-
-knitr::kable(dfDisplay)
-
-## ------------------------------------------------------------------------
-dfGrowth <- GrowPolicies(dfPolicy, Growth = 0.1)
-
-## ------------------------------------------------------------------------
-dfGrowGL <- GrowPolicies(dfGL, Growth = 0.1)
-
-## ----echo=FALSE----------------------------------------------------------
-dfDisplay <- dfGrowth %>% 
-  arrange(PolicyID) %>% 
-  head()
-
-knitr::kable(dfDisplay)
-
-## ------------------------------------------------------------------------
-dfNextYear <- IncrementPolicyYear(dfGL, Retention = 0.65, Growth = 0.1)
-
-## ----echo=FALSE----------------------------------------------------------
-dfDisplay <- dfNextYear %>% 
-  arrange(PolicyID) %>% 
-  head()
-
-knitr::kable(dfDisplay)
-
-## ------------------------------------------------------------------------
-dfTwoYears <- SimulatePolicies(1000, 2001:2002, Retention = .9, Growth = .05)
-
-## ----echo=FALSE----------------------------------------------------------
-dfDisplay <- dfNextYear %>% 
-  arrange(PolicyID) %>% 
-  head()
-
-knitr::kable(dfDisplay)
+dfGL <- dplyr::bind_rows(dfGL_CA, dfGL_NY)
 

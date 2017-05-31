@@ -5,7 +5,7 @@
 \title{Simulate a data frame of policies}
 \usage{
 SimulatePolicies(N, PolicyYears, NumYears, Exposure = 1, Retention = 1,
-  Growth = 1, StartID = 1, AdditionalColumns)
+  Growth = 0, StartID = 1, AdditionalColumns)
 }
 \arguments{
 \item{N}{An integer giving the number of policies in the first year}

@@ -55,87 +55,35 @@ dfPolicies <- SimulatePolicies(N = 100
                                , Growth = 1.0)
 ```
 
-Note that the retention and growth parameters need not be fixed as they are here. One could use 
-
-### New Policies
-
-The `NewPolicies` function will return a data frame with a fixed number of policies.
+The retention and growth rates may vary for each year by passing a vector in the argument. Note that the number of elements in the vector must be one less than the number of years being simulated.
 
 ```{r}
-dfPolicy <- NewPolicies(N = 5000, 2001)
+dfPolicies <- SimulatePolicies(N = 100
+                               , NumYears = 5
+                               , Retention = c(0.95, 0.9, 0.85, 0.8)
+                               , Growth = c(0.25, 0.2, 0.1, 0.05))
 ```
 
-```{r echo=FALSE, message=FALSE}
-library(dplyr)
-dfDisplay <- dfPolicy %>% 
-  arrange(PolicyID) %>% 
-  head()
 
-knitr::kable(dfDisplay)
-```
-
-# Renew Policies
-
-Attrition equals renewal retention minus 1.
+Note that the retention and growth parameters need not be fixed as they are here. One could use a random number generator. Below, let's assume that growth will be somewhere between 5% and 15%.
 
 ```{r}
-dfRenewal <- RenewPolicies(dfPolicy, Retention = 0.65)
+dfPolicies <- SimulatePolicies(N = 100
+                               , NumYears = 5
+                               , Retention = 0.9
+                               , Growth = runif(4, .05, .15))
 ```
 
-```{r echo=FALSE}
-dfDisplay <- dfRenewal %>% 
-  arrange(PolicyID) %>% 
-  head()
+### Renew Policies
 
-knitr::kable(dfDisplay)
-```
 
-# Grow Policies
+### Use a pre-existing data frame
 
-Policy growth is a special case of generating new policy data. However, it requires a policy data frame as the base for growth.
+The functions `GrowPolicies` and `RenewPolicies` will generate new and renewal policies, respectively for a pre-existing data frame. Note that it must correspond to the structure described below.
 
-```{r}
-dfGrowth <- GrowPolicies(dfPolicy, Growth = 0.1)
-```
-
-```{r}
-dfGrowGL <- GrowPolicies(dfGL, Growth = 0.1)
-```
-
-```{r echo=FALSE}
-dfDisplay <- dfGrowth %>% 
-  arrange(PolicyID) %>% 
-  head()
-
-knitr::kable(dfDisplay)
-```
-
-# Bringing it all together
-
-Finally, we show how to generate a sequence of policy years with user-specified renewal and growth rates.
-
-```{r }
-dfNextYear <- IncrementPolicyYear(dfGL, Retention = 0.65, Growth = 0.1)
-```
-
-```{r echo=FALSE}
-dfDisplay <- dfNextYear %>% 
-  arrange(PolicyID) %>% 
-  head()
-
-knitr::kable(dfDisplay)
-```
-
-```{r}
-dfTwoYears <- SimulatePolicies(1000, 2001:2002, Retention = .9, Growth = .05)
-```
-
-```{r echo=FALSE}
-dfDisplay <- dfNextYear %>% 
-  arrange(PolicyID) %>% 
-  head()
-
-knitr::kable(dfDisplay)
+```{r eval=FALSE}
+dfRenewals <- RenewPolicies(dfMyData, Retention = 0.8)
+dfNewBusiness <- GrowPolicies(dfMyData, 0.2)
 ```
 
 ## About the data
@@ -182,10 +130,11 @@ dfGL_CA <- SimulatePolicies(N = 5
 ```
 
 ```{r echo=FALSE}
+library(dplyr)
 dfGL_CA %>% 
   arrange(PolicyID) %>% 
   head() %>% 
-  knitr::kable(dfDisplay)
+  knitr::kable()
 ```
 
 This may be used to construct a data frame of policy data with varying characteristics by binding individual simulations as below:
