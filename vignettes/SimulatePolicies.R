@@ -50,7 +50,7 @@ dfGL_CA <- SimulatePolicies(N = 5
                             , AdditionalColumns = list(Line = "GL", State = "CA"))
 
 ## ----echo=FALSE----------------------------------------------------------
-library(dplyr)
+suppressPackageStartupMessages(library(dplyr))
 dfGL_CA %>% 
   arrange(PolicyID) %>% 
   head() %>% 
