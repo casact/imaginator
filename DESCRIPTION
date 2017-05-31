@@ -1,5 +1,5 @@
 Package: imaginator
-Title: Simulate general insurance policies and losses
+Title: Simulate General Insurance Policies and Losses
 Version: 0.1.0
 Authors@R: person("Brian", "Fannin", email = "FanninQED@Yahoo.com", role = c("aut", "cre"))
 Description: Simulate general insurance policies, losses and loss emergence.
