@@ -178,6 +178,7 @@ IncrementPolicyYear <- function(dfPolicy, Retention, Growth){
   dfPolicy
 }
 
+#' @importFrom utils head
 FixGrowthVector <- function(vecIn, numRenewals, vec_kind)
 {
 
@@ -186,12 +187,12 @@ FixGrowthVector <- function(vecIn, numRenewals, vec_kind)
   }
 
   if (length(vecIn) < numRenewals) {
-    message(paste(vec_kind, "vector is > 1, but too short. It will be padded."))
+    warning(paste(vec_kind, "vector is > 1, but too short. It will be padded."))
     vecIn = rep(vecIn, length.out = numRenewals)
   }
 
   if (length(vecIn) > numRenewals) {
-    message(paste(vec_kind, "vector is too long. It will be truncated."))
+    warning(paste(vec_kind, "vector is too long. It will be truncated."))
     vecIn = head(vecIn, numRenewals)
   }
 

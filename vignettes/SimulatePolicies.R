@@ -71,3 +71,13 @@ dfGL_NY <- SimulatePolicies(N = 50
 
 dfGL <- dplyr::bind_rows(dfGL_CA, dfGL_NY)
 
+## ------------------------------------------------------------------------
+dfPolicies <- SimulatePolicies(N = 5, PolicyYears = 1:3, Growth = c(1, 0.5))
+
+## ------------------------------------------------------------------------
+dfPolicies %>% 
+  mutate(PolicyYear = lubridate::year(PolicyEffectiveDate)) %>% 
+  group_by(PolicyYear) %>% 
+  summarise(MaxPolicyID = max(PolicyID)) %>% 
+  knitr::kable()
+
