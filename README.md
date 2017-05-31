@@ -2,7 +2,6 @@
 [![GitHub version](https://badge.fury.io/gh/PirateGrunt%2Fimaginator.svg)](https://badge.fury.io/gh/PirateGrunt%2Fimaginator)
 [![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/imaginator)](http://cran.r-project.org/package=imaginator)
 [![codecov](https://codecov.io/gh/PirateGrunt/imaginator/branch/master/graph/badge.svg)](https://codecov.io/gh/PirateGrunt/imaginator)
-[![Coverage Status](https://coveralls.io/repos/github/PirateGrunt/imaginator/badge.svg?branch=master)](https://coveralls.io/github/PirateGrunt/imaginator?branch=master)
 
 # imaginator
 
