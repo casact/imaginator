@@ -23,11 +23,12 @@ ClaimsByLinkRatio <- function(dfClaims, Links, Lags){
   for (iLink in seq.int(length(Links))){
 
     dfNextLag <- dfClaims %>%
-      filter(Lag == Lags[iLink + 1])
+      filter(Lag == Lags[iLink])
 
     links <- Links[[iLink]](nrow(dfNextLag))
 
     dfNextLag$ClaimValue <- dfNextLag$ClaimValue * links
+    dfNextLag$Lag <- Lags[iLink + 1]
 
     dfClaims <- rbind(dfClaims, dfNextLag)
   }
