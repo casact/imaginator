@@ -13,22 +13,38 @@ vignette: >
 library(dplyr)
 ```
 
-## Overview
+Claim simulation occurs once we have a data frame of policies. For each row in this data frame, we will simulate zero or more claims and zero or more claim transactions. 
 
 ```{r}
 library(imaginator)
-dfPolicy <- NewPolicies(500, 2010)
+set.seed(1234)
+dfPolicy <- NewPolicies(500, 2001)
 ```
+
+Claim simulation fits into two basic categories: 1) link ratio and 2) wait-time.
+
+## Simulate by link ratio
+
+This is basically chain ladder applied to individual claims.
 
 ```{r}
-mySeverity <- GammaHelper(10000, 0.5)
+lstFreq <- list(
+    PoissonHelper(10)
+  , PoissonHelper(5)
+  , PoissonHelper(2)
+  , PoissonHelper(0.5)
+)
+
+lstSev <- list(
+  LognormalHelper(meanlog = log(10000), sdlog = .5*log(10000))
+)
+lstSev[1:4] <- lstSev[1]
+
+dfClaims <- ClaimsByFirstReport(dfPolicy
+                                , Frequency = lstFreq
+                                , Severity = lstSev
+                                , Lags = 1:4)
 ```
-
-Note that we augment the policy table by adding a field for the number of claims.
-
-## Simulate by lag date
-
-This is basically chain ladder.
 
 We'll create a very simple example with three lag dates, fixed frequency and fixed link ratios.
 
@@ -38,11 +54,9 @@ fixedLinks <- list(FixedVal(2)
 ```
 
 ```{r }
-dfClaimsFixed <- ClaimsByLag(dfPolicy
-                             , Frequency = FixedVal(1)
-                             , Severity = FixedVal(100)
-                             , Links = fixedLinks
-                             , Lags = 1:3)
+dfClaimsFixed <- ClaimsByLinkRatio(dfClaims
+                                   , Links = fixedLinks
+                                   , Lags = 1:3)
 ```
 
 ```{r echo=FALSE, message=FALSE}
@@ -59,11 +73,9 @@ We can make things a bit more complicated by introducing variable link ratios
 normalLinks <- list(NormalHelper(2, 1, .7, 4)
                     , NormalHelper(1.5, .5, .7, 3))
 
-dfVariableLinks <- ClaimsByLag(dfPolicy
-                               , Frequency = FixedVal(1)
-                               , Severity = FixedVal(100)
-                               , Links = normalLinks
-                               , Lags = 1:3)
+dfVariableLinks <- ClaimsByLinkRatio(dfClaims
+                                     , Links = normalLinks
+                                     , Lags = 1:3)
 ```
 
 ```{r echo=FALSE, message=FALSE}
@@ -78,11 +90,9 @@ And for lots of fun, let's use a Poisson frequency, gamma severity and variable 
 
 ```{r }
 set.seed(1234)
-dfAllVariable <- ClaimsByLag(dfPolicy
-                             , Frequency = PoissonHelper(1)
-                             , Severity = GammaHelper(10000, 0.5)
-                             , Links = normalLinks
-                             , Lags = 1:3)
+dfAllVariable <- ClaimsByLinkRatio(dfClaims
+                                   , Links = normalLinks
+                                   , Lags = 1:3)
 ```
 
 ```{r echo=FALSE, message=FALSE}
@@ -91,4 +101,15 @@ dfDisplay <- dfAllVariable %>%
   head(10)
 
 knitr::kable(dfDisplay)
+```
+
+## Mojo
+
+```{r}
+library(imaginator)
+dfPolicy <- NewPolicies(500, 2010)
+```
+
+```{r}
+mySeverity <- GammaHelper(10000, 0.5)
 ```

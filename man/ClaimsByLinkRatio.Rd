@@ -11,7 +11,7 @@ ClaimsByLinkRatio(dfClaims, Links, Lags)
 
 \item{Links}{A list of functions which dictate how severities change from one evaluation date to the next}
 
-\item{Lags}{A vector of lags as integers}
+\item{Lags}{A list of functions which dictate how severities change from one evaluation date to the next}
 }
 \value{
 A claims data frame

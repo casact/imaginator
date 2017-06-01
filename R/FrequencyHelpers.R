@@ -1,3 +1,5 @@
+# TODO: If you pass in a vector of parameters, you'll get back a list of functions
+
 #' PoissonHelper
 #'
 #' This will return a poisson random number generator with a user-defined mean.
