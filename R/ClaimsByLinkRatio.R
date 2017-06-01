@@ -1,43 +1,23 @@
-#' @title Claims by lag
+#' @title Claims by link ratio
 #'
 #' @description
-#' Given a data frame of policies, this will simulate claims
+#' Given a data frame of claims, this will simulate claim development by applying a (possibly) random link ratio.
 #'
-#' @param dfPolicy A policy data frame
-#' @param Frequency A function which will randomly generate number of claims
-#' @param Severity A function which will randomly generate the severity of each claim
-#' @param Links A list of functions which dictates how severities change from one evaluation date to the next
-#' @param Lags A vector of lags
+#' @param dfClaims A claims data frame
+#' @param Links A list of functions which dictate how severities change from one evaluation date to the next
+#' @param Lags A vector of lags as integers
 #'
 #' @details
-#' The claim amounts are presumed to be cumulative
-#'
-#' @export
+#' This function will apply the link ratio algorithm at an individual claim level.
 #'
 #' @return A claims data frame
 #'
 #' @importFrom magrittr %>%
 #'
-ClaimsByLag <- function(dfPolicy, Frequency, Severity, Links, Lags){
+#' @export
+ClaimsByLinkRatio <- function(dfClaims, Links, Lags){
 
   numLags <- length(Lags)
-
-  numPolicies <- nrow(dfPolicy)
-  claimFrequencies <- Frequency(numPolicies)
-  totalClaims <- sum(claimFrequencies)
-  claimIDs <- seq.int(totalClaims)
-
-  policyIds <- mapply(rep, dfPolicy$PolicyID, claimFrequencies) %>% unlist()
-  effectiveDates <- mapply(rep, dfPolicy$PolicyEffectiveDate, claimFrequencies, SIMPLIFY = FALSE)
-  effectiveDates <- do.call("c", effectiveDates)
-  currSeverity <- Severity(totalClaims)
-
-  dfClaims <- data.frame(PolicyID = policyIds
-                         , PolicyEffectiveDate = effectiveDates
-                         , ClaimID = claimIDs
-                         , Lag = Lags[1]
-                         , ClaimValue = currSeverity
-                         , stringsAsFactors = FALSE)
 
   # If we only have one evaluation date, then we don't need to loop. We'll
   # leave the function early rather than putting crazy controls on the loop
@@ -60,14 +40,7 @@ ClaimsByLag <- function(dfPolicy, Frequency, Severity, Links, Lags){
                                         , stringsAsFactors = FALSE)
   }
 
-  # emptyFrames <- sapply(lstClaims, is.null)
-  # lstClaims <- lstClaims[!emptyFrames]
   dfClaims <- do.call(rbind, lstEvals)
-
-  # lstReturn <- list(Policies = dfPolicy
-  #                   , Claims = dfClaims)
-  #
-  # lstReturn
 
   dfClaims
 }
