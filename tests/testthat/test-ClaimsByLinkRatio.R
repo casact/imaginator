@@ -33,9 +33,7 @@ test_that("By link ratio", {
                                 , Links = fixedLinks
                                 , Lags = 1:4)
 
-  dfWide <- dfClaims %>%
-    dplyr::select(ClaimID, Lag, ClaimValue) %>%
-    tidyr::spread(Lag, ClaimValue)
+  numClaims <- length(unique(dfClaims$ClaimID))
 
-  expect_equal(nrow(dfWide), policies * sum(c(10, 9, 8, 7)))
+  expect_equal(numClaims, policies * sum(c(10, 9, 8, 7)))
 })
