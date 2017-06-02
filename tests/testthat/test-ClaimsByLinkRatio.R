@@ -21,7 +21,7 @@ test_that("By link ratio", {
 
   dfClaims <- ClaimsByFirstReport(dfPolicy
                                   , Frequency = lstFreq
-                                  , Severity = lstSev
+                                  , PaymentSeverity = lstSev
                                   , Lags = 1:4)
   fixedLinks <- list(
       FixedHelper(1.5)

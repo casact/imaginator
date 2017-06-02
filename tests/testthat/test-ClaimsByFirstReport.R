@@ -19,7 +19,7 @@ test_that("1st report", {
   )
   dfClaims <- ClaimsByFirstReport(dfPolicy
                                   , Frequency = lstFreq
-                                  , Severity = lstSev
+                                  , PaymentSeverity = lstSev
                                   , Lags = 1:4)
 
   testthat::expect_equal(nrow(dfClaims), 100 * sum(10:7))
