@@ -51,7 +51,7 @@ UniformHelper <- function(min, max){
   theFunc
 }
 
-#' FixedVal
+#' FixedHelper
 #'
 #' Returns the same, non-stochastic, value
 #'
@@ -60,7 +60,7 @@ UniformHelper <- function(min, max){
 #' @return A function
 #'
 #' @export
-FixedVal <- function(Fixed){
+FixedHelper <- function(Fixed){
   theFunc <- function(n){
     rep(Fixed, n)
   }

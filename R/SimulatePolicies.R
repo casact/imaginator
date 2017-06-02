@@ -2,7 +2,7 @@ EmptyPolicyFrame <- function(){
   data.frame(PolicyEffectiveDate = double(0)
              , PolicyExpirationDate = double(0)
              , Exposure = double(0)
-             , PolicyID = character(0)
+             , PolicyholderID = character(0)
              , stringsAsFactors = FALSE)
 }
 
@@ -25,7 +25,7 @@ GetExpirationDate <- function(EffectiveDate){
 
 }
 
-#' @title Simulate a new set of policies
+#' @title Simulate a new policy year
 #'
 #' @description This will generate a data frame of policy data. This may be used to construct renewal and growth
 #' data frames for subsequent policy years.
@@ -50,7 +50,16 @@ GetExpirationDate <- function(EffectiveDate){
 #' @importFrom lubridate days
 #' @importFrom lubridate leap_year
 #'
-NewPolicies <- function(N, PolicyYear, Exposure = 1, StartID = 1, AdditionalColumns){
+NewPolicyYear <- function(N, PolicyYear, Exposure = 1, StartID = 1, AdditionalColumns){
+
+  if (length(PolicyYear) != 1){
+    if (length(PolicyYear) == 0){
+      PolicyYear <- 2001
+    } else {
+      warning("PolicyYear is not scalar. Only the first value will be taken.")
+      PolicyYear <- PolicyYear[1]
+    }
+  }
 
   dfPolicy <- EmptyPolicyFrame()
 
@@ -69,7 +78,7 @@ NewPolicies <- function(N, PolicyYear, Exposure = 1, StartID = 1, AdditionalColu
   dfPolicy <- data.frame(PolicyEffectiveDate = effectiveDates
                          , PolicyExpirationDate = expirationDates
                          , Exposure = Exposure
-                         , PolicyID = seq.int(StartID, length.out = N)
+                         , PolicyholderID = seq.int(StartID, length.out = N)
                          , stringsAsFactors = FALSE)
 
   if (!missing(AdditionalColumns)){
@@ -141,14 +150,14 @@ GrowPolicies <- function(dfPolicy, Growth){
 
   addColumns <- setdiff(names(dfOneRow), PolicyTableColumnNames())
 
-  maxPolicyID <- max(dfPolicy$PolicyID)
+  maxPolicyholderID <- max(dfPolicy$PolicyholderID)
 
   if (length(addColumns) > 0){
     addColumns <- dfOneRow[, addColumns, drop = FALSE]
     addColumns <- as.list(addColumns)
-    dfNew <- NewPolicies(N = newBizCount, PolicyYear = policyYear, StartID = maxPolicyID + 1, AdditionalColumns = addColumns)
+    dfNew <- NewPolicyYear(N = newBizCount, PolicyYear = policyYear, StartID = maxPolicyholderID + 1, AdditionalColumns = addColumns)
   } else {
-    dfNew <- NewPolicies(N = newBizCount, PolicyYear = policyYear, StartID = maxPolicyID + 1)
+    dfNew <- NewPolicyYear(N = newBizCount, PolicyYear = policyYear, StartID = maxPolicyholderID + 1)
   }
 
   dfNew
@@ -249,10 +258,10 @@ SimulatePolicies <- function(N, PolicyYears, NumYears, Exposure = 1, Retention =
   Growth <- FixGrowthVector(Growth, numRenewals, "Growth")
 
   if (numYears == 1) {
-    return (NewPolicies(N, PolicyYears[1], Exposure, StartID, AdditionalColumns))
+    return (NewPolicyYear(N, PolicyYears[1], Exposure, StartID, AdditionalColumns))
   } else {
     lstDF <- vector("list", numYears)
-    lstDF[[1]] <- NewPolicies(N, PolicyYears[1], Exposure, StartID, AdditionalColumns)
+    lstDF[[1]] <- NewPolicyYear(N, PolicyYears[1], Exposure, StartID, AdditionalColumns)
   }
 
   for (iYear in seq.int(2, numYears)){

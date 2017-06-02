@@ -4,14 +4,14 @@
 \alias{ClaimsByFirstReport}
 \title{Claims by first report}
 \usage{
-ClaimsByFirstReport(dfPolicy, Frequency, Severity, Lags)
+ClaimsByFirstReport(dfPolicy, Frequency, PaymentSeverity, Lags)
 }
 \arguments{
 \item{dfPolicy}{A policy data frame}
 
 \item{Frequency}{A function, or list of functions which will randomly generate the number of claims per policy}
 
-\item{Severity}{A function, or list of functions which will randomly generate the severity of each claim}
+\item{PaymentSeverity}{A function, or list of functions which will randomly generate the payment for each claim}
 
 \item{Lags}{A vector of lags as integers}
 }

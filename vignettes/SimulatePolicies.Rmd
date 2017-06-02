@@ -92,10 +92,10 @@ dfNewBusiness <- GrowPolicies(dfMyData, 0.2)
 
 A policy data frame will always have at least the following columns:
 
+* PolicyholderID
 * PolicyEffectiveDate
 * PolicyExpirationDate
 * Exposure
-* PolicyID
 
 In addition, it's possible to add further columns of descriptive information such as line of business or state as discussed below.
 
@@ -130,7 +130,7 @@ dfGL_CA <- SimulatePolicies(N = 5
 ```{r echo=FALSE}
 suppressPackageStartupMessages(library(dplyr))
 dfGL_CA %>% 
-  arrange(PolicyID) %>% 
+  arrange(PolicyholderID) %>% 
   head() %>% 
   knitr::kable()
 ```
@@ -155,9 +155,9 @@ dfGL <- dplyr::bind_rows(dfGL_CA, dfGL_NY)
 
 This results in a data frame which encompasses a mature, declining book with a small but rapidly growing one.
 
-### PolicyIDs
+### PolicyholderIDs
 
-The PolicyID column is an integer which is used to uniquely track policies across renewal periods. For example, note that policy ids 1-5 appear in all periods, while policy ids 6-10 appear only in policy years 2 and 3 and policy ids 11-15 only appear in policy year 3.
+The PolicyholderID column is an integer which is used to uniquely track policies across renewal periods. For example, note that policy ids 1-5 appear in all periods, while policy ids 6-10 appear only in policy years 2 and 3 and policy ids 11-15 only appear in policy year 3.
 
 ```{r}
 dfPolicies <- SimulatePolicies(N = 5, PolicyYears = 1:3, Growth = c(1, 0.5))
@@ -167,7 +167,7 @@ dfPolicies <- SimulatePolicies(N = 5, PolicyYears = 1:3, Growth = c(1, 0.5))
 dfPolicies %>% 
   mutate(PolicyYear = lubridate::year(PolicyEffectiveDate)) %>% 
   group_by(PolicyYear) %>% 
-  summarise(MaxPolicyID = max(PolicyID)) %>% 
+  summarise(MaxPolicyholderID = max(PolicyholderID)) %>% 
   knitr::kable()
 ```
 

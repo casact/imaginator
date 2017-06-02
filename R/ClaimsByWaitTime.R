@@ -1,12 +1,3 @@
-# AY <- a
-# MonthLag <- M
-# ReportLag <- Q
-# PaymentLag <- P
-# OccMonth <- m
-# RepMonth <- r
-# PaymentMonth <- p
-# Claim <- C
-
 #' @export
 #'
 #' @description
@@ -64,8 +55,8 @@ ClaimsByWaitTime <- function(dfPolicy
   # The block above means that there may be some policies which have zero claims. This is a feature, not a bug.
   # The do.call for "c" means that those policies will drop out of the various claim vectors. We'll want to do
   # an outer join later.
-  policyIds <- mapply(rep, dfPolicy$PolicyID, claim_counts, SIMPLIFY = FALSE)
-  policyIds <- do.call("c", policyIds)
+  policyholder_ids <- mapply(rep, dfPolicy$PolicyholderID, claim_counts, SIMPLIFY = FALSE)
+  policyholder_ids <- do.call("c", policyholder_ids)
   effective_dates <- mapply(rep, dfPolicy$PolicyEffectiveDate, claim_counts, SIMPLIFY = FALSE)
   effective_dates <- do.call("c", effective_dates)
   expiration_dates <- mapply(rep, dfPolicy$PolicyExpirationDate, claim_counts, SIMPLIFY = FALSE)
@@ -101,8 +92,10 @@ ClaimsByWaitTime <- function(dfPolicy
   }
   num_payments <- sum(payment_counts)
 
-  dfClaims <- dplyr::data_frame(PolicyID = policyIds
+  dfClaims <- dplyr::data_frame(PolicyholderID = policyholder_ids
                                 , ClaimID = claim_id
+                                , PolicyEffectiveDate = effective_dates
+                                , PolicyExpirationDate = expiration_dates
                                 , OccurrenceDate = occurrence_date
                                 , ReportDate = report_date
                                 , NumberOfPayments = payment_counts)
@@ -140,10 +133,11 @@ ClaimsByWaitTime <- function(dfPolicy
     df
   })
   dfClaimPayments <- do.call(rbind, dfClaimPayments)
+  dfClaimPayments$PaymentWaitTime <- NULL
 
   dfClaims <- dplyr::left_join(dfClaims, dfClaimPayments, by = "ClaimID")
 
-  dfClaims <- dplyr::left_join(dfPolicy, dfClaims, by = "PolicyID")
+  dfClaims <- dplyr::left_join(dfPolicy, dfClaims, by = c("PolicyholderID", "PolicyEffectiveDate", "PolicyExpirationDate"))
 
   dfClaims
 

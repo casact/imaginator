@@ -2,20 +2,20 @@ context("ClaimsByFirstReport")
 
 test_that("1st report", {
 
-  dfPolicy <- NewPolicies(100, 2001)
+  dfPolicy <- NewPolicyYear(100, 2001)
 
   lstFreq <- list(
-      FixedVal(10)
-    , FixedVal(9)
-    , FixedVal(8)
-    , FixedVal(7)
+      FixedHelper(10)
+    , FixedHelper(9)
+    , FixedHelper(8)
+    , FixedHelper(7)
   )
 
   lstSev <- list(
-      FixedVal(100)
-    , FixedVal(200)
-    , FixedVal(300)
-    , FixedVal(400)
+      FixedHelper(100)
+    , FixedHelper(200)
+    , FixedHelper(300)
+    , FixedHelper(400)
   )
   dfClaims <- ClaimsByFirstReport(dfPolicy
                                   , Frequency = lstFreq

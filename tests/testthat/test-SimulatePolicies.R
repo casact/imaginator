@@ -15,6 +15,8 @@ test_that("Test inputs", {
   expect_warning(imaginator::SimulatePolicies(1000, NumYears = 5, Growth = rep(0.8, 3)))
   expect_warning(imaginator::SimulatePolicies(1000, NumYears = 5, Growth = rep(0.8, 5)))
 
+  expect_warning(imaginator::NewPolicyYear(2, 2001:2005))
+
 })
 
 test_that("Only one policy year", {
@@ -27,7 +29,7 @@ test_that("Form a policy table", {
 })
 
 test_that("New policies", {
-  df <- NewPolicies(50, 2001, 1)
+  df <- NewPolicyYear(50, 2001, 1)
   expect_equal(nrow(df), 50)
   expect_equal(ncol(df), 4)
 })

@@ -3,20 +3,20 @@ context("ClaimsByLinkRatio")
 test_that("By link ratio", {
 
   policies <- 10
-  dfPolicy <- NewPolicies(policies, 2001)
+  dfPolicy <- NewPolicyYear(policies, 2001)
 
   lstFreq <- list(
-      FixedVal(10)
-    , FixedVal(9)
-    , FixedVal(8)
-    , FixedVal(7)
+      FixedHelper(10)
+    , FixedHelper(9)
+    , FixedHelper(8)
+    , FixedHelper(7)
   )
 
   lstSev <- list(
-      FixedVal(100)
-    , FixedVal(200)
-    , FixedVal(300)
-    , FixedVal(400)
+      FixedHelper(100)
+    , FixedHelper(200)
+    , FixedHelper(300)
+    , FixedHelper(400)
   )
 
   dfClaims <- ClaimsByFirstReport(dfPolicy
@@ -24,9 +24,9 @@ test_that("By link ratio", {
                                   , Severity = lstSev
                                   , Lags = 1:4)
   fixedLinks <- list(
-      FixedVal(1.5)
-    , FixedVal(1.25)
-    , FixedVal(1.1)
+      FixedHelper(1.5)
+    , FixedHelper(1.25)
+    , FixedHelper(1.1)
   )
 
   dfClaims <- ClaimsByLinkRatio(dfClaims

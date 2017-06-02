@@ -36,5 +36,5 @@ test_that("Uniform dist", {
 })
 
 test_that("Fixed vals", {
-  testthat::expect_equal(c(4,4), FixedVal(4)(2))
+  testthat::expect_equal(c(4,4), FixedHelper(4)(2))
 })

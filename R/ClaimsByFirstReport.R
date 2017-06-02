@@ -5,7 +5,7 @@
 #'
 #' @param dfPolicy A policy data frame
 #' @param Frequency A function, or list of functions which will randomly generate the number of claims per policy
-#' @param Severity A function, or list of functions which will randomly generate the severity of each claim
+#' @param PaymentSeverity A function, or list of functions which will randomly generate the payment for each claim
 #' @param Lags A vector of lags as integers
 #'
 #' @details
@@ -16,21 +16,21 @@
 #' @importFrom magrittr %>%
 #'
 #' @export
-ClaimsByFirstReport <- function(dfPolicy, Frequency, Severity, Lags){
+ClaimsByFirstReport <- function(dfPolicy, Frequency, PaymentSeverity, Lags){
 
   if (missing(Frequency)) stop("Must supply Frequency.")
-  if (missing(Severity)) stop("Must supply Severity.")
+  if (missing(PaymentSeverity)) stop("Must supply PaymentSeverity.")
 
   numFreq <- length(Frequency)
-  numSev <- length(Severity)
+  numSev <- length(PaymentSeverity)
   if (numFreq > numSev){
     message("Frequency has more elements than severity. Recycling to accommodate.")
     indices <- rep_len(seq.int(numFreq), length.out = numSev)
     Frequency <- Frequency[indices]
   } else if (numFreq < numSev){
-    message("Severity has more elements than frequency. Recycling to accommodate.")
+    message("PaymentSeverity has more elements than frequency. Recycling to accommodate.")
     indices <- rep_len(seq.int(numSev), length.out = numFreq)
-    Severity <- Severity[indices]
+    PaymentSeverity <- PaymentSeverity[indices]
   }
 
   if (missing(Lags)) {
@@ -45,20 +45,27 @@ ClaimsByFirstReport <- function(dfPolicy, Frequency, Severity, Lags){
   first_claim_id <- 1
   for (iLag in Lags){
     claimFrequencies <- Frequency[[iLag]](numPolicies)
+    if (any(claimFrequencies < 0)){
+      message("Some claim frequencies are negative. These will be set to zero.")
+      claimFrequencies <- pmax(0, claimFrequencies)
+    }
+    claimFrequencies <- as.integer(claimFrequencies)
     totalClaims <- sum(claimFrequencies)
     claimIDs <- seq.int(from = first_claim_id, length.out = totalClaims)
     first_claim_id <- max(claimIDs) + 1
 
-    policyIds <- mapply(rep, dfPolicy$PolicyID, claimFrequencies, SIMPLIFY = FALSE)
-    policyIds <- do.call("c", policyIds)
+    policyholderIds <- mapply(rep, dfPolicy$PolicyholderID, claimFrequencies, SIMPLIFY = FALSE)
+    policyholderIds <- do.call("c", policyholderIds)
     effectiveDates <- mapply(rep, dfPolicy$PolicyEffectiveDate, claimFrequencies, SIMPLIFY = FALSE)
     effectiveDates <- do.call("c", effectiveDates)
 
-    lstClaims[[iLag]] <- data.frame(PolicyID = policyIds
+    severities <- PaymentSeverity[[iLag]](totalClaims)
+
+    lstClaims[[iLag]] <- data.frame(PolicyholderID = policyholderIds
                                     , PolicyEffectiveDate = effectiveDates
                                     , ClaimID = claimIDs
                                     , Lag = Lags[iLag]
-                                    , ClaimValue = Severity[[iLag]](totalClaims)
+                                    , PaymentAmount = severities
                                     , stringsAsFactors = FALSE)
   }
   dfClaims <- do.call(rbind, lstClaims)

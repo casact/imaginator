@@ -9,30 +9,118 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r echo=FALSE, message=FALSE}
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, results='asis')
 library(dplyr)
+library(knitr)
 ```
+
+Individual claim simulation fits into two basic categories: 1) wait-time and 2) link ratio. An example of the first may be found in Stanard and an example of the second may be found in Guszcza.
+
+## Wait-time modelling
 
 Claim simulation occurs once we have a data frame of policies. For each row in this data frame, we will simulate zero or more claims and zero or more claim transactions. 
 
-```{r}
+```{r }
 library(imaginator)
-set.seed(1234)
-dfPolicy <- NewPolicies(500, 2001)
+set.seed(12345)
+dfPolicy <- SimulatePolicies(2, 2001:2005)
+
+dfPolicy %>% 
+  head(5) %>% 
+  kable()
 ```
 
-Claim simulation fits into two basic categories: 1) link ratio and 2) wait-time.
+We'll begin with non-stochastic wait times and claim frequencies.
+
+```{r}
+dfClaimTransactions <- ClaimsByWaitTime(
+    dfPolicy
+  , ClaimFrequency = FixedHelper(2)
+  , PaymentFrequency = FixedHelper(3)
+  , OccurrenceWait = FixedHelper(10)
+  , ReportWait = FixedHelper(5)
+  , PayWait = FixedHelper(5)
+  , PaySeverity = FixedHelper(50))
+```
+
+Here we have assumed that each policy will generate 2 claims and each claim will produce 3 payment. Because we have 10 policies, this means we have 60 claim payments. Here they are for the first policy:
+
+```{r}
+dfClaimTransactions %>% 
+  filter(PolicyholderID == 1, lubridate::year(PolicyEffectiveDate) == 2001) %>% 
+  select(ClaimID, OccurrenceDate, ReportDate, PaymentDate, PaymentAmount) %>% 
+  kable()
+```
+
+Let's do that again with some random amounts. We'll keep the claim frequency fixed so that we can compare to the output above.
+
+```{r}
+dfClaimTransactions <- ClaimsByWaitTime(
+    dfPolicy
+  , ClaimFrequency = FixedHelper(2)
+  , PaymentFrequency = PoissonHelper(2)
+  , OccurrenceWait = PoissonHelper(10)
+  , ReportWait = PoissonHelper(5)
+  , PayWait = PoissonHelper(5)
+  , PaySeverity = LognormalHelper(log(50), 0.5*log(50)))
+```
+
+```{r echo=FALSE}
+dfClaimTransactions %>% 
+  filter(PolicyholderID == 1, lubridate::year(PolicyEffectiveDate) == 2001) %>% 
+  select(ClaimID, OccurrenceDate, ReportDate, PaymentDate, PaymentAmount) %>% 
+  kable()
+```
+
+Note that the transaction data is denormalized. The policy and claim information fields are repeated.
 
 ## Simulate by link ratio
 
-This is basically chain ladder applied to individual claims.
+This is basically chain ladder applied to individual claims. First, we'll need to generate a random number of claims by developmemt lag. This is effectively a triangle of "IBNYR", or Incurred But Not Yet Reported claims. With that in place, we can then develop the claims with (probably) randomized link ratios.
+
+As usual, we'll start with fixed values and then display a randomized example.
+
+```{r }
+set.seed(12345)
+dfPolicy <- SimulatePolicies(2, 2001:2005)
+
+lstFreq <- list(
+    FixedHelper(4)
+  , FixedHelper(3)
+  , FixedHelper(2)
+  , FixedHelper(1)
+)
+
+lstSev <- list(
+  FixedHelper(250)
+)
+lstSev[1:4] <- lstSev[1]
+
+dfIBNYR_Fixed <- ClaimsByFirstReport(
+    dfPolicy
+  , Frequency = lstFreq
+  , PaymentSeverity = lstSev
+  , Lags = 1:4)
+```
+
+Because we're using fixed values for the frequencies, we'll have 10 claims per policy.
 
 ```{r}
+dfIBNYR_Fixed %>% 
+  filter(PolicyholderID == 1) %>% 
+  filter(PolicyEffectiveDate == min(PolicyEffectiveDate)) %>% 
+  kable()
+```
+
+Let's try that again with some randomness:
+
+```{r }
 lstFreq <- list(
-    PoissonHelper(10)
-  , PoissonHelper(5)
+    PoissonHelper(4)
+  , PoissonHelper(3)
   , PoissonHelper(2)
-  , PoissonHelper(0.5)
+  , PoissonHelper(1)
 )
 
 lstSev <- list(
@@ -40,76 +128,65 @@ lstSev <- list(
 )
 lstSev[1:4] <- lstSev[1]
 
-dfClaims <- ClaimsByFirstReport(dfPolicy
-                                , Frequency = lstFreq
-                                , Severity = lstSev
-                                , Lags = 1:4)
+dfIBNYR_Random <- ClaimsByFirstReport(
+    dfPolicy
+  , Frequency = lstFreq
+  , PaymentSeverity = lstSev
+  , Lags = 1:4)
 ```
 
-We'll create a very simple example with three lag dates, fixed frequency and fixed link ratios.
+We see that in this case, the first policy does not have 10 claims.
 
 ```{r}
-fixedLinks <- list(FixedVal(2)
-                   , FixedVal(1.5))
+dfIBNYR_Random %>% 
+  filter(PolicyholderID == 1) %>% 
+  filter(PolicyEffectiveDate == min(PolicyEffectiveDate)) %>% 
+  kable()
+```
+
+We can now develop the claims in the IBNYR triangle. Again we'll start with fixed link ratios.
+
+```{r}
+fixedLinks <- list(FixedHelper(2)
+                   , FixedHelper(1.5)
+                   , FixedHelper(1.25))
 ```
 
 ```{r }
-dfClaimsFixed <- ClaimsByLinkRatio(dfClaims
+dfClaimsFixed <- ClaimsByLinkRatio(dfIBNYR_Fixed
                                    , Links = fixedLinks
-                                   , Lags = 1:3)
+                                   , Lags = 1:4)
 ```
 
-```{r echo=FALSE, message=FALSE}
-dfDisplay <- dfClaimsFixed %>% 
-  arrange(PolicyID) %>% 
-  head()
-
-knitr::kable(dfDisplay)
+```{r}
+dfClaimsFixed %>% 
+  filter(PolicyholderID == 1) %>% 
+  filter(PolicyEffectiveDate == min(PolicyEffectiveDate)
+         , ClaimID %in% c(1, 41)) %>%
+  arrange(ClaimID, Lag) %>% 
+  kable()
 ```
+
+Note that the second claim was unknown as of Lag 1.
 
 We can make things a bit more complicated by introducing variable link ratios
 
 ```{r }
 normalLinks <- list(NormalHelper(2, 1, .7, 4)
-                    , NormalHelper(1.5, .5, .7, 3))
+                    , NormalHelper(1.5, .5, .7, 3)
+                    , NormalHelper(1.25, .5, .7, 3))
 
-dfVariableLinks <- ClaimsByLinkRatio(dfClaims
-                                     , Links = normalLinks
-                                     , Lags = 1:3)
-```
-
-```{r echo=FALSE, message=FALSE}
-dfDisplay <- dfVariableLinks %>% 
-  arrange(PolicyID) %>% 
-  head()
-
-knitr::kable(dfDisplay)
-```
-
-And for lots of fun, let's use a Poisson frequency, gamma severity and variable links.
-
-```{r }
-set.seed(1234)
-dfAllVariable <- ClaimsByLinkRatio(dfClaims
+dfClaimsRandom <- ClaimsByLinkRatio(dfIBNYR_Random
                                    , Links = normalLinks
-                                   , Lags = 1:3)
-```
-
-```{r echo=FALSE, message=FALSE}
-dfDisplay <- dfAllVariable %>% 
-  arrange(PolicyID) %>% 
-  head(10)
-
-knitr::kable(dfDisplay)
-```
-
-## Mojo
-
-```{r}
-library(imaginator)
-dfPolicy <- NewPolicies(500, 2010)
+                                   , Lags = 1:4)
 ```
 
 ```{r}
-mySeverity <- GammaHelper(10000, 0.5)
+dfClaimsRandom %>% 
+  filter(PolicyholderID == 1) %>% 
+  filter(PolicyEffectiveDate == min(PolicyEffectiveDate)) %>%
+  arrange(ClaimID, Lag) %>% 
+  kable()
 ```
+
+Note that the link ratios apply to individual claims only. IBNYR This means that it's possible for individual claim development
