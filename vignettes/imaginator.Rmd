@@ -32,9 +32,6 @@ Note that this results in a fairly simple table. We have one record for each cla
 library(imaginator)
 
 set.seed(1234)
-myLosses <- OneSimulation(AY = 1:5)
-
-myOtherLosses <- OneSimulation(freqFn = rpois, freqArgs = list(lambda = 50))
 ```
 
 
