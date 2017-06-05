@@ -23,7 +23,7 @@ test_that("Wait time", {
 
   dfPolicy <- SimulatePolicies(2, 2001:2005)
   dfClaim <- ClaimsByWaitTime(
-    dfPolicy
+      dfPolicy
     , ClaimFrequency = FixedHelper(2)
     , PaymentFrequency = FixedHelper(1)
     , OccurrenceWait = FixedHelper(10)
