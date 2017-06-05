@@ -52,7 +52,7 @@ dfGL_CA <- SimulatePolicies(N = 5
 ## ----echo=FALSE----------------------------------------------------------
 suppressPackageStartupMessages(library(dplyr))
 dfGL_CA %>% 
-  arrange(PolicyID) %>% 
+  arrange(PolicyholderID) %>% 
   head() %>% 
   knitr::kable()
 
@@ -78,6 +78,6 @@ dfPolicies <- SimulatePolicies(N = 5, PolicyYears = 1:3, Growth = c(1, 0.5))
 dfPolicies %>% 
   mutate(PolicyYear = lubridate::year(PolicyEffectiveDate)) %>% 
   group_by(PolicyYear) %>% 
-  summarise(MaxPolicyID = max(PolicyID)) %>% 
+  summarise(MaxPolicyholderID = max(PolicyholderID)) %>% 
   knitr::kable()
 
