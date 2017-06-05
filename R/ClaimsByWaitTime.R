@@ -38,7 +38,12 @@ ClaimsByWaitTime <- function(dfPolicy
   if (missing(ClaimFrequency)) stop("Must supply ClaimFrequency.")
   if (missing(PaySeverity)) stop("Must supply Severity.")
 
-  # TODO: check the class of the wait time numbers using is.integer or some such
+  if (is.list(ClaimFrequency)) ClaimFrequency <- GetFirstFunction(ClaimFrequency)
+  if (is.list(PaymentFrequency)) PaymentFrequency <- GetFirstFunction(PaymentFrequency)
+  if (is.list(OccurrenceWait)) OccurrenceWait <- GetFirstFunction(OccurrenceWait)
+  if (is.list(ReportWait)) ReportWait <- GetFirstFunction(ReportWait)
+  if (is.list(PayWait)) PayWait <- GetFirstFunction(PayWait)
+  if (is.list(PaySeverity)) PaySeverity <- GetFirstFunction(PaySeverity)
 
   numPolicies <- nrow(dfPolicy)
 

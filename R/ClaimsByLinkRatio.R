@@ -5,7 +5,7 @@
 #'
 #' @param dfClaims A claims data frame
 #' @param Links A list of functions which dictate how severities change from one evaluation date to the next
-#' @param Lags A list of functions which dictate how severities change from one evaluation date to the next
+#' @param Lags A vector of lags
 #'
 #' @details
 #' This function will apply the link ratio algorithm at an individual claim level.
@@ -15,10 +15,23 @@
 #' @importFrom magrittr %>%
 #' @importFrom dplyr filter
 #'
+#' @examples
+#'
+#' dfPolicy <- NewPolicyYear(10, 2001)
+#' dfClaims <- ClaimsByFirstReport(
+#'                dfPolicy
+#'              , Frequency = FixedHelper(10)
+#'              , PaymentSeverity = FixedHelper(100)
+#'              , Lags = 1)
+#' dfClaims <- ClaimsByLinkRatio(dfClaims
+#'                               , Links = fixedLinks
+#'                               , Lags = 1:4)
+#'
 #' @export
 ClaimsByLinkRatio <- function(dfClaims, Links, Lags){
 
   numLinks <- length(Links)
+  if (numLinks == 1) Links <- PutFunctionInList(Links)
 
   for (iLink in seq.int(length(Links))){
 
