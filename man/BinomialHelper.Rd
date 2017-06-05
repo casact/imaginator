@@ -4,7 +4,7 @@
 \alias{BinomialHelper}
 \title{BinomialHelper}
 \usage{
-BinomialHelper(size, prob, SingletonList)
+BinomialHelper(size, prob, SingletonList = FALSE)
 }
 \arguments{
 \item{size}{number of trials}

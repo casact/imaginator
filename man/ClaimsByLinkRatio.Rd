@@ -31,7 +31,7 @@ dfClaims <- ClaimsByFirstReport(
              , PaymentSeverity = FixedHelper(100)
              , Lags = 1)
 dfClaims <- ClaimsByLinkRatio(dfClaims
-                              , Links = fixedLinks
+                              , Links = FixedHelper(c(1.25, 1.1, 1.05))
                               , Lags = 1:4)
 
 }

@@ -65,7 +65,7 @@ PoissonHelper <- function(lambda, SingletonList = FALSE){
 #' myFuncs[[1]](4)
 #'
 #' @export
-BinomialHelper <- function(size, prob, SingletonList){
+BinomialHelper <- function(size, prob, SingletonList = FALSE){
 
   size <- PadParameters(size, prob)
   prob <- PadParameters(prob, size)
