@@ -4,14 +4,37 @@
 \alias{PoissonHelper}
 \title{PoissonHelper}
 \usage{
-PoissonHelper(lambda)
+PoissonHelper(lambda, SingletonList = FALSE)
 }
 \arguments{
 \item{lambda}{Expected value of poisson function}
+
+\item{SingletonList}{Boolean indicating whether to return a single function as a list. Default FALSE.}
 }
 \value{
-A function
+A list of functions or a single function (see Details).
 }
 \description{
-This will return a poisson random number generator with a user-defined mean.
+This will return a list of poisson random number generator functions.
+}
+\details{
+The function is vectorised in the sense that one may pass in a vector of function parameters and receive a list of
+functions with the same length.
+
+If only one parameter is supplied and the user does not ask for a list to be returned, this will return a function.
+}
+\examples{
+
+myFuncs <- PoissonHelper(c(10, 20))
+myFuncs[[1]](10)
+myFuncs[[2]](10)
+
+myFunc <- PoissonHelper(10)
+is.function(myFunc)
+myFunc(10)
+
+myFunc <- PoissonHelper(10, SingletonList = TRUE)
+is.list(myFunc)
+myFunc[[1]](10)
+
 }

@@ -4,12 +4,14 @@
 \alias{UniformHelper}
 \title{UniformHelper}
 \usage{
-UniformHelper(min, max)
+UniformHelper(min, max, SingletonList = FALSE)
 }
 \arguments{
 \item{min}{The minimum value}
 
 \item{max}{The maximum value}
+
+\item{SingletonList}{Boolean indicating whether to return a single function as a list. Default FALSE.}
 }
 \value{
 A function

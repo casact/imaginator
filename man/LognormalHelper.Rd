@@ -4,12 +4,14 @@
 \alias{LognormalHelper}
 \title{LognormalHelper}
 \usage{
-LognormalHelper(meanlog, sdlog)
+LognormalHelper(meanlog, sdlog, SingletonList = FALSE)
 }
 \arguments{
 \item{meanlog}{Mean on the log scale}
 
 \item{sdlog}{Standard deviation on the log scale}
+
+\item{SingletonList}{Boolean indicating whether to return a single function as a list. Default FALSE.}
 }
 \description{
 This will create a random number generator for the lognormal function

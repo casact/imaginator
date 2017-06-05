@@ -4,7 +4,7 @@
 \alias{NormalHelper}
 \title{NormalHelper}
 \usage{
-NormalHelper(mean, sd, lowerBound, upperBound)
+NormalHelper(mean, sd, lowerBound, upperBound, SingletonList = FALSE)
 }
 \arguments{
 \item{mean}{The mean}
@@ -14,6 +14,8 @@ NormalHelper(mean, sd, lowerBound, upperBound)
 \item{lowerBound}{Lower boundary of the return values}
 
 \item{upperBound}{Upper bound of the returned values}
+
+\item{SingletonList}{Boolean indicating whether to return a single function as a list. Default FALSE.}
 }
 \value{
 A function

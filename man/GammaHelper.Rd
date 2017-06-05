@@ -4,12 +4,14 @@
 \alias{GammaHelper}
 \title{GammaHelper}
 \usage{
-GammaHelper(alpha, beta)
+GammaHelper(alpha, beta, SingletonList = FALSE)
 }
 \arguments{
 \item{alpha}{Double for the \eqn{\alpha} parameter}
 
 \item{beta}{Double for the \eqn{\beta} parameter}
+
+\item{SingletonList}{Boolean indicating whether to return a single function as a list. Default FALSE.}
 }
 \description{
 This will create a random number generator for the gamma function.

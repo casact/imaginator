@@ -11,7 +11,7 @@ ClaimsByFirstReport(dfPolicy, Frequency, PaymentSeverity, Lags)
 
 \item{Frequency}{A function, or list of functions which will randomly generate the number of claims per policy}
 
-\item{PaymentSeverity}{A function, or list of functions which will randomly generate the payment for each claim}
+\item{PaymentSeverity}{A function, or list of functions which will randomly generate the payment amount for each claim}
 
 \item{Lags}{A vector of lags as integers}
 }
@@ -19,8 +19,21 @@ ClaimsByFirstReport(dfPolicy, Frequency, PaymentSeverity, Lags)
 A claims data frame
 }
 \description{
-Given a data frame of policies, this will simulate claims by applying a (possibly) random link ratio.
+Given a data frame of policies, this will simulate the number of claims- and their initial payment-
+per policy by the development lag at which they are first reported.
 }
 \details{
-Creates a data frame with randomly generated claim values
+Creates a data frame with randomly generated claim values.
+}
+\examples{
+
+# This will generate a claim data frame which has 1,000 records
+# each of which has a severity of 100
+dfPolicy <- NewPolicyYear(100, 2001)
+dfClaims <- ClaimsByFirstReport(
+               dfPolicy
+             , Frequency = FixedHelper(10)
+             , PaymentSeverity = FixedHelper(100)
+             , Lags = 1)
+
 }

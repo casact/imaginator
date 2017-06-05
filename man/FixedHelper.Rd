@@ -4,10 +4,12 @@
 \alias{FixedHelper}
 \title{FixedHelper}
 \usage{
-FixedHelper(Fixed)
+FixedHelper(Fixed, SingletonList = FALSE)
 }
 \arguments{
 \item{Fixed}{A scalar value}
+
+\item{SingletonList}{Boolean indicating whether to return a single function as a list. Default FALSE.}
 }
 \value{
 A function
