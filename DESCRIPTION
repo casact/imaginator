@@ -1,7 +1,7 @@
 Package: imaginator
 Title: Simulate General Insurance Policies and Losses
 Version: 0.1.1
-Authors@R: person("Brian", "Fannin", email = "FanninQED@Yahoo.com", role = c("aut", "cre"))
+Authors@R: person("Brian", "Fannin", email = "captain@pirategrunt.com", role = c("aut", "cre"))
 Description: Simulate general insurance policies, losses and loss emergence. The package contemplates 
   deterministic and stochastic policy retention and growth scenarios. Retention and growth rates are percentages relative
   to the expiring portfolio. Claims are simulated for each policy. This is accomplished either be assuming a frequency
@@ -23,4 +23,4 @@ Suggests:
     rmarkdown,
     ggplot2
 VignetteBuilder: knitr
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.1
