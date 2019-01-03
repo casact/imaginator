@@ -64,12 +64,12 @@ NewPolicyYear <- function(N, PolicyYear, Exposure = 1, StartID = 1, AdditionalCo
   dfPolicy <- EmptyPolicyFrame()
 
   if (N == 0) {
-    return (dfPolicy)
+    return(dfPolicy)
   }
 
   days <- 365 + ifelse(lubridate::leap_year(PolicyYear), 1, 0)
   days <- days - 1
-  strDayOne <- paste(sprintf("%04d", PolicyYear), "01", "01", sep="-")
+  strDayOne <- paste(sprintf("%04d", PolicyYear), "01", "01", sep = "-")
   effectiveDates <- lubridate::ymd(strDayOne)
   dayOffsets <- sample(days, size = N, replace = TRUE)
   effectiveDates <- effectiveDates + lubridate::days(dayOffsets)
@@ -81,8 +81,8 @@ NewPolicyYear <- function(N, PolicyYear, Exposure = 1, StartID = 1, AdditionalCo
                          , PolicyholderID = seq.int(StartID, length.out = N)
                          , stringsAsFactors = FALSE)
 
-  if (!missing(AdditionalColumns)){
-    for (i in seq_along(AdditionalColumns)){
+  if (!missing(AdditionalColumns)) {
+    for (i in seq_along(AdditionalColumns)) {
       dfPolicy[[names(AdditionalColumns)[i]]] <- AdditionalColumns[[i]]
     }
 
@@ -229,6 +229,7 @@ FixGrowthVector <- function(vecIn, numRenewals, vec_kind)
 #' @importFrom lubridate days
 #' @importFrom lubridate years
 #' @importFrom lubridate ymd
+#' @importFrom checkmate assertIntegerish
 #'
 #' @description Growth is given as a the positive rate of growth of new policies. This may be set to zero.
 #'
@@ -244,11 +245,16 @@ SimulatePolicies <- function(N, PolicyYears, NumYears, Exposure = 1, Retention =
     numYears <- NumYears
     PolicyYears <- seq.int(2000, length.out = numYears)
   } else {
-    if (min(PolicyYears) <= 0) {
-      stop("PolicyYears can't be negative")
+    assertIntegerish(
+        PolicyYears
+      , lower = 1
+      , any.missing = FALSE
+      , unique = TRUE)
+    if (!is.integer(PolicyYears)) {
+      PolicyYears <- as.integer(PolicyYears)
     }
     if (length(PolicyYears) != (max(PolicyYears) - min(PolicyYears) + 1)) {
-      stop("PolicyYears must be a sequence.")
+      stop("PolicyYears sequence must not contain any skips.")
     }
     numYears <- length(PolicyYears)
   }
@@ -258,13 +264,13 @@ SimulatePolicies <- function(N, PolicyYears, NumYears, Exposure = 1, Retention =
   Growth <- FixGrowthVector(Growth, numRenewals, "Growth")
 
   if (numYears == 1) {
-    return (NewPolicyYear(N, PolicyYears[1], Exposure, StartID, AdditionalColumns))
+    return(NewPolicyYear(N, PolicyYears[1], Exposure, StartID, AdditionalColumns))
   } else {
     lstDF <- vector("list", numYears)
     lstDF[[1]] <- NewPolicyYear(N, PolicyYears[1], Exposure, StartID, AdditionalColumns)
   }
 
-  for (iYear in seq.int(2, numYears)){
+  for (iYear in seq.int(2, numYears)) {
     lstDF[[iYear]] <- IncrementPolicyYear(lstDF[[iYear - 1]], Retention[iYear - 1], Growth[iYear - 1])
   }
 

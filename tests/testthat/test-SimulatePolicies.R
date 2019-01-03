@@ -2,8 +2,6 @@ context("SimulatePolicies")
 
 test_that("Test inputs", {
   expect_error(imaginator::SimulatePolicies(10))
-  expect_error(imaginator::SimulatePolicies(10, PolicyYears = -1:-4))
-  expect_error(imaginator::SimulatePolicies(10, PolicyYears = c(1,5)))
 
   expect_silent(imaginator::SimulatePolicies(10, NumYears = 5))
 
@@ -17,6 +15,14 @@ test_that("Test inputs", {
 
   expect_warning(imaginator::NewPolicyYear(2, 2001:2005))
 
+})
+
+test_that("No negative inputs", {
+  expect_error(imaginator::SimulatePolicies(10, PolicyYears = -1:-4))
+})
+
+test_that("No skips in policy years", {
+  expect_error(imaginator::SimulatePolicies(10, PolicyYears = c(1,5)))
 })
 
 test_that("Only one policy year", {
@@ -43,4 +49,23 @@ test_that("Leap year works", {
   dfRenew <- RenewPolicies(dfLeapYear, 1.0)
   expect_equal(dfRenew$PolicyEffectiveDate, as.Date("2015-03-01"))
   expect_equal(dfRenew$PolicyExpirationDate, as.Date("2016-02-29"))
+
+  dfLeapYear <- data.frame(PolicyEffectiveDate = as.Date("2000-02-12")
+                           , PolicyExpirationDate = as.Date("2001-02-11")
+                           , Exposure = 1
+                           , stringsAsFactors = FALSE)
+  dfRenew <- RenewPolicies(dfLeapYear, 1.0)
+  expect_equal(dfRenew$PolicyEffectiveDate, as.Date("2001-02-12"))
+  expect_equal(dfRenew$PolicyExpirationDate, as.Date("2002-02-11"))
+
+  set.seed(1234)
+  dfPolicies <- SimulatePolicies(N = 2, NumYears = 5)
+  library(dplyr)
+
+  dfPolicies %>%
+    arrange(PolicyEffectiveDate) %>%
+    slice(c(1,3))
+
+  # expect_equal(dfPolicies$PolicyExpirationDate[1], as.Date("2001-02-11"))
+  # expect_equal(dfPolicies$PolicyEffectiveDate[2], as.Date("2001-02-12"))
 })
