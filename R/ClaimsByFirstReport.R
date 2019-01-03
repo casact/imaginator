@@ -35,16 +35,20 @@ ClaimsByFirstReport <- function(dfPolicy, Frequency, PaymentSeverity, Lags){
 
   numFreq <- length(Frequency)
   numSev <- length(PaymentSeverity)
-  if (numFreq > numSev){
+
+  if (numFreq == 1) Frequency <- PutFunctionInList(Frequency)
+  if (numSev == 1) PaymentSeverity <- PutFunctionInList(PaymentSeverity)
+
+  if (numFreq > numSev) {
     message("Frequency has more elements than severity. Recycling to accommodate.")
-    indices <- rep_len(seq.int(numFreq), length.out = numSev)
-    Frequency <- Frequency[indices]
-    numFreq <- length(Frequency)
-  } else if (numFreq < numSev){
-    message("PaymentSeverity has more elements than frequency. Recycling to accommodate.")
     indices <- rep_len(seq.int(numSev), length.out = numFreq)
     PaymentSeverity <- PaymentSeverity[indices]
     numSev <- length(PaymentSeverity)
+  } else if (numFreq < numSev) {
+    message("PaymentSeverity has more elements than frequency. Recycling to accommodate.")
+    indices <- rep_len(seq.int(numFreq), length.out = numSev)
+    Frequency <- Frequency[indices]
+    numFreq <- length(Frequency)
   }
 
   if (numFreq != numSev) {
@@ -56,9 +60,6 @@ ClaimsByFirstReport <- function(dfPolicy, Frequency, PaymentSeverity, Lags){
   }
 
   numLags <- length(Lags)
-
-  if (numFreq == 1) Frequency <- PutFunctionInList(Frequency)
-  if (numSev == 1) PaymentSeverity <- PutFunctionInList(PaymentSeverity)
 
   numPolicies <- nrow(dfPolicy)
 
