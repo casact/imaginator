@@ -1,6 +1,6 @@
 Package: imaginator
 Title: Simulate General Insurance Policies and Losses
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: person("Brian", "Fannin", email = "captain@pirategrunt.com", role = c("aut", "cre"))
 Description: Simulate general insurance policies, losses and loss emergence. The package contemplates 
   deterministic and stochastic policy retention and growth scenarios. Retention and growth rates are percentages relative
@@ -16,7 +16,8 @@ Imports:
     magrittr,
     assertthat,
     lubridate,
-    stringi
+    stringi,
+    checkmate
 Suggests:
     testthat,
     knitr,
