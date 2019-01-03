@@ -4,8 +4,9 @@
 \alias{ClaimsByWaitTime}
 \title{ClaimsByWaitTime}
 \usage{
-ClaimsByWaitTime(dfPolicy, ClaimFrequency, PaymentFrequency, OccurrenceWait,
-  ReportWait, PayWait, PaySeverity, PayOnlyPositive = TRUE)
+ClaimsByWaitTime(dfPolicy, ClaimFrequency, PaymentFrequency,
+  OccurrenceWait, ReportWait, PayWait, PaySeverity,
+  PayOnlyPositive = TRUE)
 }
 \arguments{
 \item{dfPolicy}{A data frame of policy records}
