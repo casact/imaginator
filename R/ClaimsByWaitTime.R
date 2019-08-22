@@ -7,12 +7,12 @@
 #' @title ClaimsByWaitTime
 #'
 #' @param dfPolicy A data frame of policy records
-#' @param ClaimFrequency A function which will randomly generate the number of claims per policy
-#' @param PaymentFrequency A function which will determine the number of payments per claim
-#' @param OccurrenceWait A function which will generate the time until occurrence for each claim
-#' @param ReportWait A function which will generate the time until report
-#' @param PayWait A function which will generate the lag time between payments
-#' @param PaySeverity A function which will randomly generate the severity of each claim payment
+#' @param ClaimFrequency Number of claims per policy; can be a distribution.
+#' @param PaymentFrequency Number of payments per claim; can be a distribution.
+#' @param OccurrenceWait Time until occurrence for each claim; can be a distribution
+#' @param ReportWait Time until report; can be a distribution.
+#' @param PayWait Lag time between payments; can be a distribution.
+#' @param PaySeverity Severity of each claim payment; can be a distribution.
 #' @param PayOnlyPositive Boolean indicating whether to discard negative payments.
 #'
 #' @details
@@ -38,16 +38,10 @@ ClaimsByWaitTime <- function(dfPolicy
   if (missing(ClaimFrequency)) stop("Must supply ClaimFrequency.")
   if (missing(PaySeverity)) stop("Must supply Severity.")
 
-  if (is.list(ClaimFrequency)) ClaimFrequency <- GetFirstFunction(ClaimFrequency)
-  if (is.list(PaymentFrequency)) PaymentFrequency <- GetFirstFunction(PaymentFrequency)
-  if (is.list(OccurrenceWait)) OccurrenceWait <- GetFirstFunction(OccurrenceWait)
-  if (is.list(ReportWait)) ReportWait <- GetFirstFunction(ReportWait)
-  if (is.list(PayWait)) PayWait <- GetFirstFunction(PayWait)
-  if (is.list(PaySeverity)) PaySeverity <- GetFirstFunction(PaySeverity)
-
   numPolicies <- nrow(dfPolicy)
 
-  claim_counts <- ClaimFrequency(numPolicies)
+  claim_counts <- sample_or_rep(ClaimFrequency, numPolicies)
+
   claim_counts <- as.integer(claim_counts)
   if (any(claim_counts < 0)) {
     message("Some claim_counts were less than zero. These will be set to zero.")
@@ -67,7 +61,7 @@ ClaimsByWaitTime <- function(dfPolicy
   expiration_dates <- mapply(rep, dfPolicy$PolicyExpirationDate, claim_counts, SIMPLIFY = FALSE)
   expiration_dates <- do.call("c", expiration_dates)
 
-  occurrence_wait <- OccurrenceWait(numClaims)
+  occurrence_wait <- sample_or_rep(OccurrenceWait, numClaims)
   occurrence_wait <- as.integer(occurrence_wait)
   if (any(occurrence_wait) < 0){
     message("Some occurrence wait times are less than zero. These will be set to zero.")
@@ -81,7 +75,7 @@ ClaimsByWaitTime <- function(dfPolicy
     occurrence_date <- pmin(occurrence_date, expiration_dates)
   }
 
-  report_wait <- ReportWait(numClaims)
+  report_wait <- sample_or_rep(ReportWait, numClaims)
   report_wait <- as.integer(report_wait)
   if (any(report_wait) < 0){
     message("Some reporting wait times are less than zero. These will be set to zero.")
@@ -89,7 +83,7 @@ ClaimsByWaitTime <- function(dfPolicy
   }
   report_date <- occurrence_date + report_wait
 
-  payment_counts <- PaymentFrequency(numClaims)
+  payment_counts <- sample_or_rep(PaymentFrequency, numClaims)
   payment_counts <- as.integer(payment_counts)
   if (any(payment_counts) < 1){
     message("Some payment frequencies were less than one. They will be set to one.")
@@ -111,14 +105,14 @@ ClaimsByWaitTime <- function(dfPolicy
   claim_trans_rep <- mapply(rep, report_date, payment_counts, SIMPLIFY = FALSE)
   claim_trans_rep <- do.call("c", claim_trans_rep)
 
-  pay_wait <- PayWait(num_payments)
+  pay_wait <- sample_or_rep(PayWait, num_payments)
   pay_wait <- as.integer(pay_wait)
   if (any(pay_wait < 0)){
     message("Some payment wait times were less than zero. These will be set to zero.")
     pay_wait <- pmax(0, pay_wait)
   }
 
-  pay_amount <- PaySeverity(num_payments)
+  pay_amount <- sample_or_rep(PaySeverity, num_payments)
   if (any(pay_amount < 0) & PayOnlyPositive){
     message("There were some negative payment amounts. They will be set to zero.
             If you don't want this, be sure to set the PayOnlyPositive parameter to TRUE")

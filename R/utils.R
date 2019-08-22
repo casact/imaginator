@@ -1,3 +1,11 @@
+#' @importFrom distributions random is_distribution
+sample_or_rep <- function(x, n) {
+  if (distributions::is_distribution(x))
+    distributions::random(x, n)
+  else
+    rep(x, n)
+}
+
 PadParameters <- function(paramA, paramB){
   num_a <- length(paramA)
   num_b <- length(paramB)
