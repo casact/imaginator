@@ -9,9 +9,9 @@ ClaimsByFirstReport(dfPolicy, Frequency, PaymentSeverity, Lags)
 \arguments{
 \item{dfPolicy}{A policy data frame.}
 
-\item{Frequency}{A list of length `Lags` of number of claims per policy or their distributions.}
+\item{Frequency}{A list of the same length as `Lags` of number of claims per policy or their distributions.}
 
-\item{PaymentSeverity}{A list of length `Lags` of payment amount for each claim or their distributions.}
+\item{PaymentSeverity}{A list of the same length as `Lags` of payment amount for each claim or their distributions.}
 
 \item{Lags}{A vector of lags as integers.}
 }

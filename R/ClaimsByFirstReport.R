@@ -5,8 +5,8 @@
 #' per policy by the development lag at which they are first reported.
 #'
 #' @param dfPolicy A policy data frame.
-#' @param Frequency A list of length `Lags` of number of claims per policy or their distributions.
-#' @param PaymentSeverity A list of length `Lags` of payment amount for each claim or their distributions.
+#' @param Frequency A list of the same length as `Lags` of number of claims per policy or their distributions.
+#' @param PaymentSeverity A list of the same length as `Lags` of payment amount for each claim or their distributions.
 #' @param Lags A vector of lags as integers.
 #'
 #' @details
