@@ -3,7 +3,6 @@
 export(ClaimsByFirstReport)
 export(ClaimsByLinkRatio)
 export(ClaimsByWaitTime)
-export(FixedHelper)
 export(GrowPolicies)
 export(IncrementPolicyYear)
 export(NewPolicyYear)
