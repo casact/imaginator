@@ -36,8 +36,8 @@ ClaimsByFirstReport <- function(dfPolicy, Frequency, PaymentSeverity, Lags){
   numFreq <- length(Frequency)
   numSev <- length(PaymentSeverity)
 
-  if (!rlang::is_bare_list(Frequency)) Frequency <- list(Frequency)
-  if (!rlang::is_bare_list(PaymentSeverity)) PaymentSeverity <- list(PaymentSeverity)
+  Frequency <- maybe_wrap_in_list(Frequency)
+  PaymentSeverity <- maybe_wrap_in_list(PaymentSeverity)
 
   if (numFreq > numSev) {
     message("Frequency has more elements than severity. Recycling to accommodate.")
