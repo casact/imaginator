@@ -18,7 +18,7 @@ Imports:
     lubridate,
     stringi,
     checkmate,
-    distributions (>= 0.0.0.9001),
+    distributions3,
     rlang
 Suggests:
     testthat,
@@ -27,5 +27,4 @@ Suggests:
     ggplot2
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
-Remotes: 
-    alexpghayes/distributions
+

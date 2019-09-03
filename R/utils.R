@@ -1,7 +1,6 @@
-#' @importFrom distributions random is_distribution
 sample_or_rep <- function(x, n) {
-  if (distributions::is_distribution(x))
-    distributions::random(x, n)
+  if (distributions3::is_distribution(x))
+    distributions3::random(x, n)
   else
     rep(x, n)
 }

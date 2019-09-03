@@ -55,8 +55,8 @@ dfClaimTransactions %>%
 
 Let's do that again with some random amounts. We'll keep the claim frequency fixed so that we can compare to the output above.
 
-```{r}
-library(distributions)
+```{r, message = FALSE}
+library(distributions3)
 dfClaimTransactions <- ClaimsByWaitTime(
     dfPolicy
   , ClaimFrequency = 2
