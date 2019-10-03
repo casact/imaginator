@@ -9,7 +9,9 @@ ClaimsByLinkRatio(dfClaims, Links, Lags)
 \arguments{
 \item{dfClaims}{A claims data frame}
 
-\item{Links}{A list of functions which dictate how severities change from one evaluation date to the next}
+\item{Links}{A vector of the same length as `Lags` of factors, or their
+distributions, determining how severities change from one evaluation date
+to the next.}
 
 \item{Lags}{A vector of lags}
 }
@@ -27,11 +29,11 @@ This function will apply the link ratio algorithm at an individual claim level.
 dfPolicy <- NewPolicyYear(10, 2001)
 dfClaims <- ClaimsByFirstReport(
                dfPolicy
-             , Frequency = FixedHelper(10)
-             , PaymentSeverity = FixedHelper(100)
+             , Frequency = 10
+             , PaymentSeverity = 100
              , Lags = 1)
 dfClaims <- ClaimsByLinkRatio(dfClaims
-                              , Links = FixedHelper(c(1.25, 1.1, 1.05))
+                              , Links = c(1.25, 1.1, 1.05)
                               , Lags = 1:4)
 
 }

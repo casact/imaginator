@@ -17,7 +17,9 @@ Imports:
     assertthat,
     lubridate,
     stringi,
-    checkmate
+    checkmate,
+    distributions3,
+    rlang
 Suggests:
     testthat,
     knitr,
@@ -25,3 +27,4 @@ Suggests:
     ggplot2
 VignetteBuilder: knitr
 RoxygenNote: 6.1.1
+

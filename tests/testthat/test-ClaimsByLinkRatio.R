@@ -6,12 +6,12 @@ test_that("By link ratio", {
   dfPolicy <- NewPolicyYear(policies, 2001)
 
   dfClaims <- ClaimsByFirstReport(dfPolicy
-                                  , Frequency = FixedHelper(10:7)
-                                  , PaymentSeverity = FixedHelper(100 * 1:4)
+                                  , Frequency = 10:7
+                                  , PaymentSeverity = 100 * 1:4
                                   , Lags = 1:4)
 
   dfClaims <- ClaimsByLinkRatio(dfClaims
-                                , Links = FixedHelper(c(1.5, 1.25, 1.1))
+                                , Links = c(1.5, 1.25, 1.1)
                                 , Lags = 1:4)
 
   numClaims <- length(unique(dfClaims$ClaimID))
@@ -24,7 +24,7 @@ test_that("Pad functions", {
   dfPolicy <- SimulatePolicies(2, 2001:2005)
 
   expect_message(
-    imaginator::ClaimsByFirstReport(dfPolicy, FixedHelper(4:1), FixedHelper(250), Lags = 1:4)
+    imaginator::ClaimsByFirstReport(dfPolicy, 4:1, 250, Lags = 1:4)
   )
 
 })
@@ -37,8 +37,8 @@ test_that("Claim count checks out", {
 
   dfIBNYR_Fixed <- ClaimsByFirstReport(
     dfPolicy
-    , Frequency = FixedHelper(4:1)
-    , PaymentSeverity = FixedHelper(rep(250, 4))
+    , Frequency = 4:1
+    , PaymentSeverity = rep(250, 4)
     , Lags = 1:4)
 
   claim_count_lag_1 <- dfIBNYR_Fixed %>%

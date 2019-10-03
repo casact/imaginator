@@ -7,13 +7,13 @@
 ClaimsByFirstReport(dfPolicy, Frequency, PaymentSeverity, Lags)
 }
 \arguments{
-\item{dfPolicy}{A policy data frame}
+\item{dfPolicy}{A policy data frame.}
 
-\item{Frequency}{A function, or list of functions which will randomly generate the number of claims per policy}
+\item{Frequency}{A list of the same length as `Lags` of number of claims per policy or their distributions.}
 
-\item{PaymentSeverity}{A function, or list of functions which will randomly generate the payment amount for each claim}
+\item{PaymentSeverity}{A list of the same length as `Lags` of payment amount for each claim or their distributions.}
 
-\item{Lags}{A vector of lags as integers}
+\item{Lags}{A vector of lags as integers.}
 }
 \value{
 A claims data frame
@@ -32,8 +32,8 @@ Creates a data frame with randomly generated claim values.
 dfPolicy <- NewPolicyYear(100, 2001)
 dfClaims <- ClaimsByFirstReport(
                dfPolicy
-             , Frequency = FixedHelper(10)
-             , PaymentSeverity = FixedHelper(100)
+             , Frequency = 10
+             , PaymentSeverity = 100
              , Lags = 1)
 
 }

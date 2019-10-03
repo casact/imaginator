@@ -4,10 +4,10 @@
 #' Given a data frame of policies, this will simulate the number of claims- and their initial payment-
 #' per policy by the development lag at which they are first reported.
 #'
-#' @param dfPolicy A policy data frame
-#' @param Frequency A function, or list of functions which will randomly generate the number of claims per policy
-#' @param PaymentSeverity A function, or list of functions which will randomly generate the payment amount for each claim
-#' @param Lags A vector of lags as integers
+#' @param dfPolicy A policy data frame.
+#' @param Frequency A list of the same length as `Lags` of number of claims per policy or their distributions.
+#' @param PaymentSeverity A list of the same length as `Lags` of payment amount for each claim or their distributions.
+#' @param Lags A vector of lags as integers.
 #'
 #' @details
 #' Creates a data frame with randomly generated claim values.
@@ -23,8 +23,8 @@
 #' dfPolicy <- NewPolicyYear(100, 2001)
 #' dfClaims <- ClaimsByFirstReport(
 #'                dfPolicy
-#'              , Frequency = FixedHelper(10)
-#'              , PaymentSeverity = FixedHelper(100)
+#'              , Frequency = 10
+#'              , PaymentSeverity = 100
 #'              , Lags = 1)
 #'
 #' @export
@@ -36,8 +36,8 @@ ClaimsByFirstReport <- function(dfPolicy, Frequency, PaymentSeverity, Lags){
   numFreq <- length(Frequency)
   numSev <- length(PaymentSeverity)
 
-  if (numFreq == 1) Frequency <- PutFunctionInList(Frequency)
-  if (numSev == 1) PaymentSeverity <- PutFunctionInList(PaymentSeverity)
+  Frequency <- maybe_wrap_in_list(Frequency)
+  PaymentSeverity <- maybe_wrap_in_list(PaymentSeverity)
 
   if (numFreq > numSev) {
     message("Frequency has more elements than severity. Recycling to accommodate.")
@@ -66,7 +66,7 @@ ClaimsByFirstReport <- function(dfPolicy, Frequency, PaymentSeverity, Lags){
   lstClaims <- vector("list", numLags)
   first_claim_id <- 1
   for (iLag in seq.int(numLags)){
-    claimFrequencies <- Frequency[[iLag]](numPolicies)
+    claimFrequencies <- sample_or_rep(Frequency[[iLag]], numPolicies)
     if (any(claimFrequencies < 0)){
       message("Some claim frequencies are negative. These will be set to zero.")
       claimFrequencies <- pmax(0, claimFrequencies)
@@ -81,7 +81,7 @@ ClaimsByFirstReport <- function(dfPolicy, Frequency, PaymentSeverity, Lags){
     effectiveDates <- mapply(rep, dfPolicy$PolicyEffectiveDate, claimFrequencies, SIMPLIFY = FALSE)
     effectiveDates <- do.call("c", effectiveDates)
 
-    severities <- PaymentSeverity[[iLag]](totalClaims)
+    severities <- sample_or_rep(PaymentSeverity[[iLag]], totalClaims)
 
     lstClaims[[iLag]] <- data.frame(PolicyholderID = policyholderIds
                                     , PolicyEffectiveDate = effectiveDates

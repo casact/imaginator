@@ -11,17 +11,17 @@ ClaimsByWaitTime(dfPolicy, ClaimFrequency, PaymentFrequency,
 \arguments{
 \item{dfPolicy}{A data frame of policy records}
 
-\item{ClaimFrequency}{A function which will randomly generate the number of claims per policy}
+\item{ClaimFrequency}{Number of claims per policy; can be a distribution.}
 
-\item{PaymentFrequency}{A function which will determine the number of payments per claim}
+\item{PaymentFrequency}{Number of payments per claim; can be a distribution.}
 
-\item{OccurrenceWait}{A function which will generate the time until occurrence for each claim}
+\item{OccurrenceWait}{Time until occurrence for each claim; can be a distribution}
 
-\item{ReportWait}{A function which will generate the time until report}
+\item{ReportWait}{Time until report; can be a distribution.}
 
-\item{PayWait}{A function which will generate the lag time between payments}
+\item{PayWait}{Lag time between payments; can be a distribution.}
 
-\item{PaySeverity}{A function which will randomly generate the severity of each claim payment}
+\item{PaySeverity}{Severity of each claim payment; can be a distribution.}
 
 \item{PayOnlyPositive}{Boolean indicating whether to discard negative payments.}
 }

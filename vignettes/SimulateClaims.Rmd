@@ -36,12 +36,12 @@ We'll begin with non-stochastic wait times and claim frequencies.
 ```{r}
 dfClaimTransactions <- ClaimsByWaitTime(
     dfPolicy
-  , ClaimFrequency = FixedHelper(2)
-  , PaymentFrequency = FixedHelper(3)
-  , OccurrenceWait = FixedHelper(10)
-  , ReportWait = FixedHelper(5)
-  , PayWait = FixedHelper(5)
-  , PaySeverity = FixedHelper(50))
+  , ClaimFrequency = 2
+  , PaymentFrequency = 3
+  , OccurrenceWait = 10
+  , ReportWait = 5
+  , PayWait = 5
+  , PaySeverity = 50)
 ```
 
 Here we have assumed that each policy will generate 2 claims and each claim will produce 3 payment. Because we have 10 policies, this means we have 60 claim payments. Here they are for the first policy:
@@ -55,15 +55,16 @@ dfClaimTransactions %>%
 
 Let's do that again with some random amounts. We'll keep the claim frequency fixed so that we can compare to the output above.
 
-```{r}
+```{r, message = FALSE}
+library(distributions3)
 dfClaimTransactions <- ClaimsByWaitTime(
     dfPolicy
-  , ClaimFrequency = FixedHelper(2)
-  , PaymentFrequency = PoissonHelper(2)
-  , OccurrenceWait = PoissonHelper(10)
-  , ReportWait = PoissonHelper(5)
-  , PayWait = PoissonHelper(5)
-  , PaySeverity = LognormalHelper(log(50), 0.5*log(50)))
+  , ClaimFrequency = 2
+  , PaymentFrequency = Poisson(2)
+  , OccurrenceWait = Poisson(10)
+  , ReportWait = Poisson(5)
+  , PayWait = Poisson(5)
+  , PaySeverity = LogNormal(log(50), 0.5*log(50)))
 ```
 
 ```{r echo=FALSE}
@@ -86,14 +87,14 @@ set.seed(12345)
 dfPolicy <- SimulatePolicies(2, 2001:2005)
 
 lstFreq <- list(
-    FixedHelper(4)
-  , FixedHelper(3)
-  , FixedHelper(2)
-  , FixedHelper(1)
+    4
+  , 3
+  , 2
+  , 1
 )
 
 lstSev <- list(
-  FixedHelper(250)
+  250
 )
 lstSev[1:4] <- lstSev[1]
 
@@ -117,14 +118,14 @@ Let's try that again with some randomness:
 
 ```{r }
 lstFreq <- list(
-    PoissonHelper(4)
-  , PoissonHelper(3)
-  , PoissonHelper(2)
-  , PoissonHelper(1)
+    Poisson(4)
+  , Poisson(3)
+  , Poisson(2)
+  , Poisson(1)
 )
 
 lstSev <- list(
-  LognormalHelper(meanlog = log(10000), sdlog = .5*log(10000))
+  LogNormal(log_mu = log(10000), log_sigma = .5*log(10000))
 )
 lstSev[1:4] <- lstSev[1]
 
@@ -147,9 +148,9 @@ dfIBNYR_Random %>%
 We can now develop the claims in the IBNYR triangle. Again we'll start with fixed link ratios.
 
 ```{r}
-fixedLinks <- list(FixedHelper(2)
-                   , FixedHelper(1.5)
-                   , FixedHelper(1.25))
+fixedLinks <- list(2
+                   , 1.5
+                   , 1.25)
 ```
 
 ```{r }
@@ -172,9 +173,9 @@ Note that the second claim was unknown as of Lag 1.
 We can make things a bit more complicated by introducing variable link ratios
 
 ```{r }
-normalLinks <- list(NormalHelper(2, 1, .7, 4)
-                    , NormalHelper(1.5, .5, .7, 3)
-                    , NormalHelper(1.25, .5, .7, 3))
+normalLinks <- list(  Normal(2, 1)
+                    , Normal(1.5, .5)
+                    , Normal(1.25, .5))
 
 dfClaimsRandom <- ClaimsByLinkRatio(dfIBNYR_Random
                                    , Links = normalLinks

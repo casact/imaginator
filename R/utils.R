@@ -1,3 +1,17 @@
+sample_or_rep <- function(x, n) {
+  if (distributions3::is_distribution(x))
+    distributions3::random(x, n)
+  else
+    rep(x, n)
+}
+
+maybe_wrap_in_list <- function(x) {
+  if (length(x) == 1 && !rlang::is_bare_list(x))
+    list(x)
+  else
+    x
+}
+
 PadParameters <- function(paramA, paramB){
   num_a <- length(paramA)
   num_b <- length(paramB)
