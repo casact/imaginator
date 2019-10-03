@@ -1,6 +1,6 @@
 [![Travis-CI Build Status](https://travis-ci.org/PirateGrunt/imaginator.svg?branch=master)](https://travis-ci.org/PirateGrunt/imaginator)
 [![GitHub version](https://badge.fury.io/gh/PirateGrunt%2Fimaginator.svg)](https://badge.fury.io/gh/PirateGrunt%2Fimaginator)
-[![CRAN\_Status\_Badge](http://www.r-pkg.org/badges/version/imaginator)](http://cran.r-project.org/package=imaginator)
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/imaginator)](https://cran.r-project.org/package=imaginator)
 [![codecov](https://codecov.io/gh/PirateGrunt/imaginator/branch/master/graph/badge.svg)](https://codecov.io/gh/PirateGrunt/imaginator)
 
 # imaginator
