@@ -4,10 +4,10 @@
 #' Given a data frame of policies, this will simulate the number of claims- and their initial payment-
 #' per policy by the development lag at which they are first reported.
 #'
-#' @param dfPolicy A policy data frame.
-#' @param Frequency A list of the same length as `Lags` of number of claims per policy or their distributions.
-#' @param PaymentSeverity A list of the same length as `Lags` of payment amount for each claim or their distributions.
-#' @param Lags A vector of lags as integers.
+#' @param tbl_policy A policy data frame.
+#' @param frequency A list of the same length as `lags` of number of claims per policy or their distributions.
+#' @param payment_severity A list of the same length as `lags` of payment amount for each claim or their distributions.
+#' @param lags A vector of lags as integers.
 #'
 #' @details
 #' Creates a data frame with randomly generated claim values.
@@ -20,54 +20,54 @@
 #'
 #' # This will generate a claim data frame which has 1,000 records
 #' # each of which has a severity of 100
-#' dfPolicy <- NewPolicyYear(100, 2001)
-#' dfClaims <- ClaimsByFirstReport(
-#'                dfPolicy
-#'              , Frequency = 10
-#'              , PaymentSeverity = 100
-#'              , Lags = 1)
+#' tbl_policy <- policy_year_new(100, 2001)
+#' tbl_claims <- claims_by_first_report(
+#'                tbl_policy,
+#'                frequency = 10,
+#'                payment_severity = 100,
+#'                lags = 1)
 #'
 #' @export
-ClaimsByFirstReport <- function(dfPolicy, Frequency, PaymentSeverity, Lags){
+claims_by_first_report <- function(tbl_policy, frequency, payment_severity, lags){
 
-  if (missing(Frequency)) stop("Must supply Frequency.")
-  if (missing(PaymentSeverity)) stop("Must supply PaymentSeverity.")
+  if (missing(frequency)) stop("Must supply frequency.")
+  if (missing(payment_severity)) stop("Must supply payment_severity.")
 
-  numFreq <- length(Frequency)
-  numSev <- length(PaymentSeverity)
+  numFreq <- length(frequency)
+  numSev <- length(payment_severity)
 
-  Frequency <- maybe_wrap_in_list(Frequency)
-  PaymentSeverity <- maybe_wrap_in_list(PaymentSeverity)
+  frequency <- maybe_wrap_in_list(frequency)
+  payment_severity <- maybe_wrap_in_list(payment_severity)
 
   if (numFreq > numSev) {
-    message("Frequency has more elements than severity. Recycling to accommodate.")
+    message("frequency has more elements than severity. Recycling to accommodate.")
     indices <- rep_len(seq.int(numSev), length.out = numFreq)
-    PaymentSeverity <- PaymentSeverity[indices]
-    numSev <- length(PaymentSeverity)
+    payment_severity <- payment_severity[indices]
+    numSev <- length(payment_severity)
   } else if (numFreq < numSev) {
-    message("PaymentSeverity has more elements than frequency. Recycling to accommodate.")
+    message("payment_severity has more elements than frequency. Recycling to accommodate.")
     indices <- rep_len(seq.int(numFreq), length.out = numSev)
-    Frequency <- Frequency[indices]
-    numFreq <- length(Frequency)
+    frequency <- frequency[indices]
+    numFreq <- length(frequency)
   }
 
   if (numFreq != numSev) {
     stop("Something very strange has happened. Contact package maintainer for support.")
   }
 
-  if (missing(Lags)) {
-    Lags <- seq.int(numFreq)
+  if (missing(lags)) {
+    lags <- seq.int(numFreq)
   }
 
-  numLags <- length(Lags)
+  num_lags <- length(lags)
 
-  numPolicies <- nrow(dfPolicy)
+  numPolicies <- nrow(tbl_policy)
 
-  lstClaims <- vector("list", numLags)
+  lstClaims <- vector("list", num_lags)
   first_claim_id <- 1
-  for (iLag in seq.int(numLags)){
-    claimFrequencies <- sample_or_rep(Frequency[[iLag]], numPolicies)
-    if (any(claimFrequencies < 0)){
+  for (iLag in seq.int(num_lags)) {
+    claimFrequencies <- sample_or_rep(frequency[[iLag]], numPolicies)
+    if (any(claimFrequencies < 0)) {
       message("Some claim frequencies are negative. These will be set to zero.")
       claimFrequencies <- pmax(0, claimFrequencies)
     }
@@ -76,19 +76,23 @@ ClaimsByFirstReport <- function(dfPolicy, Frequency, PaymentSeverity, Lags){
     claimIDs <- seq.int(from = first_claim_id, length.out = totalClaims)
     first_claim_id <- max(claimIDs) + 1
 
-    policyholderIds <- mapply(rep, dfPolicy$PolicyholderID, claimFrequencies, SIMPLIFY = FALSE)
+    policyholderIds <- mapply(rep, tbl_policy$policyholder_id, claimFrequencies, SIMPLIFY = FALSE)
     policyholderIds <- do.call("c", policyholderIds)
-    effectiveDates <- mapply(rep, dfPolicy$PolicyEffectiveDate, claimFrequencies, SIMPLIFY = FALSE)
+    effectiveDates <- mapply(rep, tbl_policy$policy_effective_date, claimFrequencies, SIMPLIFY = FALSE)
     effectiveDates <- do.call("c", effectiveDates)
 
-    severities <- sample_or_rep(PaymentSeverity[[iLag]], totalClaims)
+    severities <- sample_or_rep(payment_severity[[iLag]], totalClaims)
 
-    lstClaims[[iLag]] <- data.frame(PolicyholderID = policyholderIds
-                                    , PolicyEffectiveDate = effectiveDates
-                                    , ClaimID = claimIDs
-                                    , Lag = Lags[iLag]
-                                    , PaymentAmount = severities
+    lstClaims[[iLag]] <- data.frame(policyholder_id = policyholderIds
+                                    , policy_effective_date = effectiveDates
+                                    , claim_id = claimIDs
+                                    , lag = lags[iLag]
+                                    , payment_amount = severities
                                     , stringsAsFactors = FALSE)
   }
-  dfClaims <- do.call(rbind, lstClaims)
+
+  tbl_claims <- do.call(rbind, lstClaims)
+
+  tbl_claims
+
 }
