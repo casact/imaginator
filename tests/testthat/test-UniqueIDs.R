@@ -24,14 +24,14 @@ test_that("UniqueIDs", {
 })
 
 test_that("IncrementID", {
-  dfPolicy <- NewPolicyYear(200, 2000, StartID = 100)
+  dfPolicy <- policy_year_new(200, 2000, start_id = 100)
 
-  dfPolicy2 <- GrowPolicies(dfPolicy, Growth = 1)
+  dfPolicy2 <- policies_grow(dfPolicy, growth = 1)
 
-  expect_gt(min(dfPolicy2$PolicyholderID), max(dfPolicy$PolicyholderID))
+  expect_gt(min(dfPolicy2$policyholder_id), max(dfPolicy$policyholder_id))
 
-  dfPolicy <- SimulatePolicies(10, 2000:2001, Retention = 0, Growth = 1)
+  dfPolicy <- policies_simulate(10, 2000:2001, retention = 0, growth = 1)
 
-  expect_equal(length(unique(dfPolicy$PolicyholderID)), nrow(dfPolicy))
+  expect_equal(length(unique(dfPolicy$policyholder_id)), nrow(dfPolicy))
 
 })

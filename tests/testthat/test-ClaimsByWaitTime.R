@@ -1,35 +1,40 @@
-context("ClaimsByWaitTime")
+context("claims_by_wait_time")
 
 test_that("Wait time", {
 
-  dfPolicy <- NewPolicyYear(100, 2001)
+  num_policies <- 100
+  claim_frquency <- 10
+  payment_frequency <- 10
 
-  ClaimFrequency <- 10
-  PaymentFrequency <- 10
-  OccurrenceWait <- 180
-  ReportWait <- 25
-  PayWait <- 25
-  PaySeverity <- 250
+  tbl_policy <- policy_year_new(num_policies, 2001)
 
-  dfClaims <- ClaimsByWaitTime(dfPolicy
-                               , ClaimFrequency
-                               , PaymentFrequency
-                               , OccurrenceWait
-                               , ReportWait
-                               , PayWait
-                               , PaySeverity)
+  tbl_claim <- claims_by_wait_time(
+    tbl_policy
+    , claim_frquency
+    , payment_frequency
+    , occurrence_wait = 10
+    , report_wait = 5
+    , pay_wait = 5
+    , pay_severity = 50)
 
-  testthat::expect_equal(nrow(dfClaims), 100 * 10 * 10)
+  testthat::expect_equal(nrow(tbl_claim), num_policies * claim_frquency * payment_frequency)
 
-  dfPolicy <- SimulatePolicies(2, 2001:2005)
-  dfClaim <- ClaimsByWaitTime(
-      dfPolicy
-    , ClaimFrequency = 2
-    , PaymentFrequency = 1
-    , OccurrenceWait = 10
-    , ReportWait = 5
-    , PayWait = 5
-    , PaySeverity = 50)
+  num_policies <- 2
+  payment_frequency <- 1
+  claim_frequency <- 10
 
-  testthat::expect_equal(nrow(dfClaim), 2 * 5 * 2)
+  policy_years <- 2001:2003
+
+  tbl_policy <- policies_simulate(num_policies, policy_years)
+  tbl_claim <- claims_by_wait_time(
+      tbl_policy
+    , claim_frequency
+    , payment_frequency
+    , occurrence_wait = 10
+    , report_wait = 5
+    , pay_wait = 5
+    , pay_severity = 50)
+
+  testthat::expect_equal(nrow(tbl_claim), length(policy_years) * num_policies * claim_frquency * payment_frequency)
+
 })

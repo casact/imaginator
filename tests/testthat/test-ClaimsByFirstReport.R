@@ -1,21 +1,22 @@
-context("ClaimsByFirstReport")
+context("claims_by_first_report")
 
 test_that("1st report", {
 
-  dfPolicy <- NewPolicyYear(100, 2001)
+  dfPolicy <- policy_year_new(100, 2001)
 
-  dfClaims <- ClaimsByFirstReport(dfPolicy
-                                  , Frequency = 10:7
-                                  , PaymentSeverity = 100 * 1:4
-                                  , Lags = 1:4)
+  dfClaims <- claims_by_first_report(
+    dfPolicy
+    , frequency = 10:7
+    , payment_severity = 100 * 1:4
+    , lags = 1:4)
 
   testthat::expect_equal(nrow(dfClaims), 100 * sum(10:7))
 
-  dfClaims <- ClaimsByFirstReport(
+  dfClaims <- claims_by_first_report(
       dfPolicy
-    , Frequency = 10
-    , PaymentSeverity = 100
-    , Lags = 1)
+    , frequency = 10
+    , payment_severity = 100
+    , lags = 1)
 
   testthat::expect_equal(nrow(dfClaims), 100 * 10)
 
