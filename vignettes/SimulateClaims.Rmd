@@ -24,9 +24,9 @@ Claim simulation occurs once we have a data frame of policies. For each row in t
 ```{r }
 library(imaginator)
 set.seed(12345)
-dfPolicy <- SimulatePolicies(2, 2001:2005)
+tbl_policy <- policies_simulate(2, 2001:2005)
 
-dfPolicy %>% 
+tbl_policy %>% 
   head(5) %>% 
   kable()
 ```
@@ -34,22 +34,22 @@ dfPolicy %>%
 We'll begin with non-stochastic wait times and claim frequencies.
 
 ```{r}
-dfClaimTransactions <- ClaimsByWaitTime(
-    dfPolicy
-  , ClaimFrequency = 2
-  , PaymentFrequency = 3
-  , OccurrenceWait = 10
-  , ReportWait = 5
-  , PayWait = 5
-  , PaySeverity = 50)
+tbl_claim_transactions <- claims_by_wait_time(
+  tbl_policy,
+  claim_frequency = 2,
+  payment_frequency = 3,
+  occurrence_wait = 10,
+  report_wait = 5,
+  pay_wait = 5,
+  pay_severity = 50)
 ```
 
 Here we have assumed that each policy will generate 2 claims and each claim will produce 3 payment. Because we have 10 policies, this means we have 60 claim payments. Here they are for the first policy:
 
 ```{r}
-dfClaimTransactions %>% 
-  filter(PolicyholderID == 1, lubridate::year(PolicyEffectiveDate) == 2001) %>% 
-  select(ClaimID, OccurrenceDate, ReportDate, PaymentDate, PaymentAmount) %>% 
+tbl_claim_transactions %>% 
+  filter(policyholder_id == 1, lubridate::year(policy_effective_date) == 2001) %>% 
+  select(claim_id, occurrence_date, report_date, payment_date, payment_amount) %>% 
   kable()
 ```
 
@@ -57,20 +57,20 @@ Let's do that again with some random amounts. We'll keep the claim frequency fix
 
 ```{r, message = FALSE}
 library(distributions3)
-dfClaimTransactions <- ClaimsByWaitTime(
-    dfPolicy
-  , ClaimFrequency = 2
-  , PaymentFrequency = Poisson(2)
-  , OccurrenceWait = Poisson(10)
-  , ReportWait = Poisson(5)
-  , PayWait = Poisson(5)
-  , PaySeverity = LogNormal(log(50), 0.5*log(50)))
+tbl_claim_transactions <- claims_by_wait_time(
+  tbl_policy,
+  claim_frequency = 2,
+  payment_frequency = Poisson(2),
+  occurrence_wait = Poisson(10),
+  report_wait = Poisson(5),
+  pay_wait = Poisson(5),
+  pay_severity = LogNormal(log(50), 0.5 * log(50)))
 ```
 
 ```{r echo=FALSE}
-dfClaimTransactions %>% 
-  filter(PolicyholderID == 1, lubridate::year(PolicyEffectiveDate) == 2001) %>% 
-  select(ClaimID, OccurrenceDate, ReportDate, PaymentDate, PaymentAmount) %>% 
+tbl_claim_transactions %>% 
+  filter(policyholder_id == 1, lubridate::year(policy_effective_date) == 2001) %>% 
+  select(claim_id, occurrence_date, report_date, payment_date, payment_amount) %>% 
   kable()
 ```
 
@@ -84,7 +84,7 @@ As usual, we'll start with fixed values and then display a randomized example.
 
 ```{r }
 set.seed(12345)
-dfPolicy <- SimulatePolicies(2, 2001:2005)
+tbl_policy <- policies_simulate(2, 2001:2005)
 
 lstFreq <- list(
     4
@@ -98,19 +98,19 @@ lstSev <- list(
 )
 lstSev[1:4] <- lstSev[1]
 
-dfIBNYR_Fixed <- ClaimsByFirstReport(
-    dfPolicy
-  , Frequency = lstFreq
-  , PaymentSeverity = lstSev
-  , Lags = 1:4)
+tbl_ibnyr_fixed <- claims_by_first_report(
+    tbl_policy
+  , frequency = lstFreq
+  , payment_severity = lstSev
+  , lags = 1:4)
 ```
 
 Because we're using fixed values for the frequencies, we'll have 10 claims per policy.
 
 ```{r}
-dfIBNYR_Fixed %>% 
-  filter(PolicyholderID == 1) %>% 
-  filter(PolicyEffectiveDate == min(PolicyEffectiveDate)) %>% 
+tbl_ibnyr_fixed %>% 
+  filter(policyholder_id == 1) %>% 
+  filter(policy_effective_date == min(policy_effective_date)) %>% 
   kable()
 ```
 
@@ -129,42 +129,42 @@ lstSev <- list(
 )
 lstSev[1:4] <- lstSev[1]
 
-dfIBNYR_Random <- ClaimsByFirstReport(
-    dfPolicy
-  , Frequency = lstFreq
-  , PaymentSeverity = lstSev
-  , Lags = 1:4)
+tbl_ibnyr_random <- claims_by_first_report(
+    tbl_policy
+  , frequency = lstFreq
+  , payment_severity = lstSev
+  , lags = 1:4)
 ```
 
 We see that in this case, the first policy does not have 10 claims.
 
 ```{r}
-dfIBNYR_Random %>% 
-  filter(PolicyholderID == 1) %>% 
-  filter(PolicyEffectiveDate == min(PolicyEffectiveDate)) %>% 
+tbl_ibnyr_random %>% 
+  filter(policyholder_id == 1) %>% 
+  filter(policy_effective_date == min(policy_effective_date)) %>% 
   kable()
 ```
 
 We can now develop the claims in the IBNYR triangle. Again we'll start with fixed link ratios.
 
 ```{r}
-fixedLinks <- list(2
-                   , 1.5
-                   , 1.25)
+fixedLinks <- list(2, 1.5, 1.25)
 ```
 
 ```{r }
-dfClaimsFixed <- ClaimsByLinkRatio(dfIBNYR_Fixed
-                                   , Links = fixedLinks
-                                   , Lags = 1:4)
+tbl_claims_fixed <- claims_by_link_ratio(
+  tbl_ibnyr_fixed,
+  links = fixedLinks,
+  lags = 1:4)
 ```
 
 ```{r}
-dfClaimsFixed %>% 
-  filter(PolicyholderID == 1) %>% 
-  filter(PolicyEffectiveDate == min(PolicyEffectiveDate)
-         , ClaimID %in% c(1, 41)) %>%
-  arrange(ClaimID, Lag) %>% 
+tbl_claims_fixed %>% 
+  filter(policyholder_id == 1) %>% 
+  filter(
+    policy_effective_date == min(policy_effective_date), 
+    claim_id %in% c(1, 41)) %>%
+  arrange(claim_id, lag) %>% 
   kable()
 ```
 
@@ -173,20 +173,24 @@ Note that the second claim was unknown as of Lag 1.
 We can make things a bit more complicated by introducing variable link ratios
 
 ```{r }
-normalLinks <- list(  Normal(2, 1)
-                    , Normal(1.5, .5)
-                    , Normal(1.25, .5))
+normalLinks <- list(  
+  Normal(2, 1),
+  Normal(1.5, .5),
+  Normal(1.25, .5))
 
-dfClaimsRandom <- ClaimsByLinkRatio(dfIBNYR_Random
-                                   , Links = normalLinks
-                                   , Lags = 1:4)
+tbl_claims_random <- claims_by_link_ratio(
+  tbl_ibnyr_random, 
+  links = normalLinks, 
+  lags = 1:4)
 ```
 
 ```{r}
-dfClaimsRandom %>% 
-  filter(PolicyholderID == 1) %>% 
-  filter(PolicyEffectiveDate == min(PolicyEffectiveDate)) %>%
-  arrange(ClaimID, Lag) %>% 
+tbl_claims_random %>% 
+  filter(policyholder_id == 1) %>% 
+  filter(
+    policy_effective_date == min(policy_effective_date), 
+    claim_id %in% c(1, 41)) %>%
+  arrange(claim_id, lag) %>% 
   kable()
 ```
 

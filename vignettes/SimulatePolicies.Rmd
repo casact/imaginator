@@ -14,7 +14,9 @@ vignette: >
 ```{r}
 library(imaginator)
 set.seed(1234)
-dfPolicies <- SimulatePolicies(N = 10, NumYears = 5)
+tbl_policies <- policies_simulate(
+  n = 10,
+  num_years = 5)
 ```
 
 This will produce 5 policy years of 10 policies each.
@@ -24,54 +26,60 @@ This will produce 5 policy years of 10 policies each.
 During simulation we distinguish between new and renewal business and also allow the set of policies to grow and/or contract. This permits us to examine different scenarios for change in business composition and the effect they have on loss settlement patterns. In particular, we are interested in situations where subgroups change in size and may distort the aggregate loss reserve estimate. If not needed or wanted, the growth and retention parameters may be set to unity for all simulated years.
 
 ```{r}
-dfPolicies <- SimulatePolicies(N = 10
-                               , NumYears = 5
-                               , Retention = 0.9
-                               , Growth = 0.1)
+tbl_policies <- policies_simulate(
+  n = 10,
+  num_years = 5,
+  retention = 0.9,
+  growth = 0.1)
 ```
 
 This will generate five policy years, the first of which will have 100 policies. In the first renewal period, 10% of the policies will non-renew and there will be new business growth of 10% of the expiring book. In this example, the retention and growth figurees are such that the total number of policies will remain fixed. One could also construct a scenario of growth or contraction as follows:
 
 ```{r}
 # Gradually expanding book of business
-dfPolicies <- SimulatePolicies(N = 100
-                               , NumYears = 5
-                               , Retention = 0.9
-                               , Growth = 0.2)
+tbl_policies <- policies_simulate(
+  n = 100,
+  num_years = 5,
+  retention = 0.9,
+  growth = 0.2)
 
 # Gradually contracting book of business
-dfPolicies <- SimulatePolicies(N = 100
-                               , NumYears = 5
-                               , Retention = 0.8
-                               , Growth = 0.1)
+tbl_policies <- policies_simulate(
+  n = 100,
+  num_years = 5,
+  retention = 0.8,
+  growth = 0.1)
 ```
 
 An extreme case would be one in which the portfolio turns over every year:
 
 ```{r}
-dfPolicies <- SimulatePolicies(N = 100
-                               , NumYears = 5
-                               , Retention = 0.0
-                               , Growth = 1.0)
+tbl_policies <- policies_simulate(
+  n = 100,
+  num_years = 5,
+  retention = 0.0,
+  growth = 1.0)
 ```
 
 The retention and growth rates may vary for each year by passing a vector in the argument. Note that the number of elements in the vector must be one less than the number of years being simulated.
 
 ```{r}
-dfPolicies <- SimulatePolicies(N = 100
-                               , NumYears = 5
-                               , Retention = c(0.95, 0.9, 0.85, 0.8)
-                               , Growth = c(0.25, 0.2, 0.1, 0.05))
+tbl_policies <- policies_simulate(
+  n = 100,
+  num_years = 5,
+  retention = c(0.95, 0.9, 0.85, 0.8),
+  growth = c(0.25, 0.2, 0.1, 0.05))
 ```
 
 
 Note that the retention and growth parameters need not be fixed as they are here. One could use a random number generator. Below, let's assume that growth will be somewhere between 5% and 15%.
 
 ```{r}
-dfPolicies <- SimulatePolicies(N = 100
-                               , NumYears = 5
-                               , Retention = 0.9
-                               , Growth = runif(4, .05, .15))
+tbl_policies <- policies_simulate(
+  n = 100,
+  num_years = 5,
+  retention = 0.9, 
+  growth = runif(4, .05, .15))
 ```
 
 ### Renew Policies
@@ -79,11 +87,11 @@ dfPolicies <- SimulatePolicies(N = 100
 
 ### Use a pre-existing data frame
 
-The functions `GrowPolicies` and `RenewPolicies` will generate new and renewal policies, respectively for a pre-existing data frame. Note that it must correspond to the structure described below.
+The functions `policies_grow` and `policies_renew` will generate new and renewal policies, respectively for a pre-existing data frame. Note that it must correspond to the structure described below.
 
 ```{r eval=FALSE}
-dfRenewals <- RenewPolicies(dfMyData, Retention = 0.8)
-dfNewBusiness <- GrowPolicies(dfMyData, 0.2)
+dfRenewals <- policies_renew(dfMyData, retention = 0.8)
+dfNewBusiness <- policies_grow(dfMyData, 0.2)
 ```
 
 ## About the data
@@ -119,18 +127,19 @@ See, for example:
 
 ### Additional Columns
 
-The `AdditionalColumns` parameter allows one to insert additional data into the data frame. Below, we add the columns "GL" and "CA" to identify the set of policies.
+The `additional_columns` parameter allows one to insert additional data into the data frame. Below, we add the columns "GL" and "CA" to identify the set of policies.
 
 ```{r}
-dfGL_CA <- SimulatePolicies(N = 5
-                            , NumYears = 5
-                            , AdditionalColumns = list(Line = "GL", State = "CA"))
+dfGL_CA <- policies_simulate(
+  n = 5, 
+  num_years = 5, 
+  additional_columns = list(Line = "GL", State = "CA"))
 ```
 
 ```{r echo=FALSE}
 suppressPackageStartupMessages(library(dplyr))
 dfGL_CA %>% 
-  arrange(PolicyholderID) %>% 
+  arrange(policyholder_id) %>% 
   head() %>% 
   knitr::kable()
 ```
@@ -138,17 +147,19 @@ dfGL_CA %>%
 This may be used to construct a data frame of policy data with varying characteristics by binding individual simulations as below:
 
 ```{r}
-dfGL_CA <- SimulatePolicies(N = 500
-                            , NumYears = 5
-                            , AdditionalColumns = list(Line = "GL", State = "CA")
-                            , Retention = 0.5
-                            , Growth = .01)
+dfGL_CA <- policies_simulate(
+  n = 500, 
+  num_years = 5, 
+  additional_columns = list(Line = "GL", State = "CA"), 
+  retention = 0.5, 
+  growth = .01)
 
-dfGL_NY <- SimulatePolicies(N = 50
-                            , NumYears = 5
-                            , AdditionalColumns = list(Line = "GL", State = "NY")
-                            , Retention = 0.9
-                            , Growth = .5)
+dfGL_NY <- policies_simulate(
+  n = 50, 
+  num_years = 5, 
+  additional_columns = list(Line = "GL", State = "NY"), 
+  retention = 0.9, 
+  growth = .5)
 
 dfGL <- dplyr::bind_rows(dfGL_CA, dfGL_NY)
 ```
@@ -160,14 +171,17 @@ This results in a data frame which encompasses a mature, declining book with a s
 The PolicyholderID column is an integer which is used to uniquely track policies across renewal periods. For example, note that policy ids 1-5 appear in all periods, while policy ids 6-10 appear only in policy years 2 and 3 and policy ids 11-15 only appear in policy year 3.
 
 ```{r}
-dfPolicies <- SimulatePolicies(N = 5, PolicyYears = 1:3, Growth = c(1, 0.5))
+tbl_policies <- policies_simulate(
+  n = 5, 
+  policy_years = 1:3, 
+  growth = c(1, 0.5))
 ```
 
 ```{r}
-dfPolicies %>% 
-  mutate(PolicyYear = lubridate::year(PolicyEffectiveDate)) %>% 
+tbl_policies %>% 
+  mutate(PolicyYear = lubridate::year(policy_effective_date)) %>% 
   group_by(PolicyYear) %>% 
-  summarise(MaxPolicyholderID = max(PolicyholderID)) %>% 
+  summarise(MaxPolicyholderID = max(policyholder_id)) %>% 
   knitr::kable()
 ```
 
