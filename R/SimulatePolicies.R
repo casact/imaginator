@@ -1,14 +1,15 @@
 # This Source Code Form is subject to the terms of the Mozilla Public License, v. 2.0.
 # If a copy of the MPL was not distributed with this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
+#' @importFrom tibble tibble
+
 empty_policy_table <- function(){
 
-  data.frame(
+  tibble(
     policy_effective_date = double(0)
     , policy_expiration_date = double(0)
     , exposure = double(0)
     , policyholder_id = character(0)
-    , stringsAsFactors = FALSE
   )
 }
 
@@ -55,6 +56,7 @@ get_expiration_date <- function(effective_date){
 #' @importFrom lubridate ymd
 #' @importFrom lubridate days
 #' @importFrom lubridate leap_year
+#' @importFrom tibble tibble
 #'
 policy_year_new <- function(n, policy_year, exposure = 1, start_id = 1, additional_columns){
 
@@ -81,11 +83,10 @@ policy_year_new <- function(n, policy_year, exposure = 1, start_id = 1, addition
   effectiveDates <- effectiveDates + lubridate::days(dayOffsets)
   expirationDates <- get_expiration_date(effectiveDates)
 
-  tbl_policy <- data.frame(policy_effective_date = effectiveDates
+  tbl_policy <- tibble(policy_effective_date = effectiveDates
                          , policy_expiration_date = expirationDates
                          , exposure = exposure
-                         , policyholder_id = seq.int(start_id, length.out = n)
-                         , stringsAsFactors = FALSE)
+                         , policyholder_id = seq.int(start_id, length.out = n))
 
   if (!missing(additional_columns)) {
     for (i in seq_along(additional_columns)) {

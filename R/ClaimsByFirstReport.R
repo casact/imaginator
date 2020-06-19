@@ -18,6 +18,7 @@
 #' @return A claims data frame
 #'
 #' @importFrom magrittr %>%
+#' @importFrom tibble tibble
 #'
 #' @examples
 #'
@@ -86,12 +87,11 @@ claims_by_first_report <- function(tbl_policy, frequency, payment_severity, lags
 
     severities <- sample_or_rep(payment_severity[[iLag]], totalClaims)
 
-    lstClaims[[iLag]] <- data.frame(policyholder_id = policyholderIds
+    lstClaims[[iLag]] <- tibble(policyholder_id = policyholderIds
                                     , policy_effective_date = effectiveDates
                                     , claim_id = claimIDs
                                     , lag = lags[iLag]
-                                    , payment_amount = severities
-                                    , stringsAsFactors = FALSE)
+                                    , payment_amount = severities)
   }
 
   tbl_claims <- do.call(rbind, lstClaims)

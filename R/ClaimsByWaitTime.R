@@ -26,6 +26,7 @@
 #' are less than zero, or payment frequencies are less than one, they will be converted with a message.
 #'
 #' @importFrom dplyr left_join
+#' @importFrom tibble tibble
 #'
 claims_by_wait_time <- function(
   tbl_policy
@@ -118,12 +119,11 @@ claims_by_wait_time <- function(
             If you don't want this, be sure to set the pay_only_positive parameter to TRUE")
   }
 
-  dfClaimPayments <- data.frame(
+  dfClaimPayments <- tibble(
       claim_id = claim_trans_ids
     , payment_date = claim_trans_rep
     , payment_wait_time = pay_wait
     , payment_amount = pay_amount
-    , stringsAsFactors = FALSE
   )
 
   dfClaimPayments <- split(dfClaimPayments, dfClaimPayments$claim_id)

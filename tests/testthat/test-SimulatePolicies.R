@@ -41,20 +41,18 @@ test_that("New policies", {
 })
 
 test_that("Leap year works", {
-  dfLeapYear <- data.frame(
+  dfLeapYear <- tibble(
     policy_effective_date = as.Date("2014-03-01")
     , policy_expiration_date = as.Date("2015-02-28")
-    , exposure = 1
-    , stringsAsFactors = FALSE)
+    , exposure = 1)
 
   dfRenew <- policies_renew(dfLeapYear, 1.0)
   expect_equal(dfRenew$policy_effective_date, as.Date("2015-03-01"))
   expect_equal(dfRenew$policy_expiration_date, as.Date("2016-02-29"))
 
-  dfLeapYear <- data.frame(policy_effective_date = as.Date("2000-02-12")
+  dfLeapYear <- tibble(policy_effective_date = as.Date("2000-02-12")
                            , policy_expiration_date = as.Date("2001-02-11")
-                           , exposure = 1
-                           , stringsAsFactors = FALSE)
+                           , exposure = 1)
   dfRenew <- policies_renew(dfLeapYear, 1.0)
   expect_equal(dfRenew$policy_effective_date, as.Date("2001-02-12"))
   expect_equal(dfRenew$policy_expiration_date, as.Date("2002-02-11"))
