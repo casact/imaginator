@@ -4,9 +4,16 @@
 \alias{claims_by_wait_time}
 \title{claims_by_wait_time}
 \usage{
-claims_by_wait_time(tbl_policy, claim_frequency, payment_frequency,
-  occurrence_wait, report_wait, pay_wait, pay_severity,
-  pay_only_positive = TRUE)
+claims_by_wait_time(
+  tbl_policy,
+  claim_frequency,
+  payment_frequency,
+  occurrence_wait,
+  report_wait,
+  pay_wait,
+  pay_severity,
+  pay_only_positive = TRUE
+)
 }
 \arguments{
 \item{tbl_policy}{A data frame of policy records}

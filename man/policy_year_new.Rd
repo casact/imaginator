@@ -4,8 +4,7 @@
 \alias{policy_year_new}
 \title{Simulate a new policy year}
 \usage{
-policy_year_new(n, policy_year, exposure = 1, start_id = 1,
-  additional_columns)
+policy_year_new(n, policy_year, exposure = 1, start_id = 1, additional_columns)
 }
 \arguments{
 \item{n}{The number of policies to generate}

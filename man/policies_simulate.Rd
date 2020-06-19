@@ -4,8 +4,16 @@
 \alias{policies_simulate}
 \title{Simulate a data frame of policies}
 \usage{
-policies_simulate(n, policy_years, num_years, exposure = 1,
-  retention = 1, growth = 0, start_id = 1, additional_columns)
+policies_simulate(
+  n,
+  policy_years,
+  num_years,
+  exposure = 1,
+  retention = 1,
+  growth = 0,
+  start_id = 1,
+  additional_columns
+)
 }
 \arguments{
 \item{n}{An integer giving the number of policies in the first year}

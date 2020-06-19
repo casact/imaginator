@@ -3,7 +3,6 @@
 \docType{package}
 \name{imaginator}
 \alias{imaginator}
-\alias{imaginator-package}
 \title{imaginator}
 \description{
 Simulate general insurance policies, losses and loss emergence. The package contemplates
