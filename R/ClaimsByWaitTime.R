@@ -92,11 +92,10 @@ claims_by_wait_time <- function(
   }
   num_payments <- sum(payment_counts)
 
-  tbl_claims <- data.frame(
+  tbl_claims <- tibble(
     policyholder_id = policyholder_ids
     , claim_id = claim_id
     , policy_effective_date = effective_dates
-    , policy_expiration_date = expiration_dates
     , occurrence_date = occurrence_date
     , report_date = report_date
     , number_of_payments = payment_counts)
@@ -138,7 +137,6 @@ claims_by_wait_time <- function(
 
   tbl_claims <- dplyr::left_join(tbl_claims, dfClaimPayments, by = "claim_id")
 
-  # tbl_claims <- dplyr::left_join(tbl_policy, tbl_claims, by = c("policyholder_id", "policy_effective_date", "policy_expiration_date"))
   tbl_claims <- dplyr::left_join(tbl_policy, tbl_claims, by = c("policyholder_id", "policy_effective_date"))
 
   tbl_claims
