@@ -1,0 +1,65 @@
+---
+title: "Policy Characteristics"
+author: "Steve Fiete"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Policy Characteristics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+The policy characteristics class (pol_char) provides a way to create simulated policies with additional characteristics which are not uniform throughout the data set, but instead are generated randomly with a specified frequency. It also can be used to update or add additional characteristics to existing simulated policy tables. A modified example from the SimulatedPolicies vignette is used below. 
+
+Here a `pol_char` object is created which specifies policy additional characteristics will be state, line, and uw_score, and how frequently each is expected to occur in randomly drawn samples.  We can add those characteristics to an existing policy table.
+```{r}
+library(imaginator)
+set.seed(42)
+tbl_policies <- policies_simulate(
+  n = 30,
+  num_years = 5)
+
+sample_chars <- pol_char(
+  list(
+    state = c('AL' ,'AR', 'AZ'),
+    line = c('auto', 'home'),
+    uw_score = LETTERS[1:5]
+  ),
+  list(
+    state = c(.5, .2, .3)
+    , line = c(.6, .4)
+    , uw_score = c(.15, .25, .4, .2, .1)
+  )
+)
+
+tbl_policies <- fill_addl(plc = sample_chars, 
+                          tbl_policy = tbl_policies)
+
+```
+The message lets us know that new columns are being added to the policy table. If those columns had already been there, then there would be no message. It is also possible to create and fill a polciy table in a single function call.
+
+```{r}
+tbl_policies <- fill_addl(plc = sample_chars,
+                          n = 30,
+                          num_years = 5)
+
+head(tbl_policies, 10)
+```
+
+Any parameters allowed in `policies_simulate` can be allowed in fill_addl.
+
+`fill_addl` adds columns to an existing policy table. Suppose we wanted to simulate data on the marketing channel for each policy, which could be "agent", "direct", or "affiliated".
+
+```{r}
+
+mkt_char <- pol_char(
+  list(mkting = c('agent', 'direct', 'affiliated')),
+  list(mkting = c(.7, .2, .1)))
+
+
+tbl_policies <- fill_addl(mkt_char, tbl_policies)
+
+head(tbl_policies, 10)
+```
+
+Here there is a warning not not all of the additional characteristics were affected since they were not included in the `pol_char` object. It is a warning rather than simply a message to help the user catch typos.

@@ -30,7 +30,7 @@ policies_simulate(
 
 \item{start_id}{Integer of the first number in the policy ID sequence}
 
-\item{additional_columns}{A list of addtional column names and values}
+\item{additional_columns}{A list of additional column names and values}
 }
 \value{
 A data frame of policy data
