@@ -230,7 +230,7 @@ FixGrowthVector <- function(vecIn, numRenewals, vec_kind)
 #' @param retention A vector indicating loss of policies
 #' @param growth A vector indicating the rate of growth of policies
 #' @param start_id Integer of the first number in the policy ID sequence
-#' @param additional_columns A list of addtional column names and values
+#' @param additional_columns A list of additional column names and values
 #'
 #' @return A data frame of policy data
 #'
